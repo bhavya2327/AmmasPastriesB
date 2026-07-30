@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amma's Pastries | Luxury Bakery</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link rel="stylesheet" href="style.css" rel="stylesheet"/>
+</head>
+<body class="flex h-screen overflow-hidden">
+<div class="header"></div>
+<main class="flex-1 flex flex-col min-w-0">
+<div class="p-4 md:p-8 lg:p-10 flex flex-wrap items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<button onclick="toggleSidebar()" class="lg:hidden w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+<i class="fa-solid fa-bars"></i>
+</button>
+<h1 class="literata text-[25px] md:text-[30px] lg:text-[35px] ">Videos</h1>
+</div>
+
+<button class="flex items-center gap-2 border border-[#CCCCCC] px-4 md:px-5 py-2 lg:rounded-[10px] sm:rounded-[8px] rounded-[6px] lg:text-[17px] sm:text-[15px] text-[13px] font-medium hover:text-white hover-gradient">
+<i class="fa-solid fa-cloud-arrow-up"></i>
+<span class="uppercase  whitespace-nowrap">Upload  Videos</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto custom-scroll px-4 md:px-8 lg:px-10 pb-32">
+<div id="card-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-4 xl:gap-5"></div>
+</div>
+
+<footer class="fixed bottom-0 left-0 right-0 lg:left-72 bg-white/95 backdrop-blur-md border-t border-gray-100 p-4 md:p-6 flex justify-center md:justify-end gap-3 z-20">
+<button  onclick="openBranchPopup()" class="flex-1 md:flex-none px-6 md:px-8 py-2 border border-[#F36E21] lg:rounded-[10px] sm:rounded-[8px] rounded-[6px] lg:text-[17px] sm:text-[15px] text-[13px] font-medium  hover-gradient hover:text-white ">Clone</button>
+<button class="flex-1 md:flex-none px-6 md:px-8 py-2 border border-[#F36E21] lg:rounded-[10px] sm:rounded-[8px] rounded-[6px] lg:text-[17px] sm:text-[15px] text-[13px]  font-medium hover-gradient hover:text-white">Submit</button>
+</footer>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+
+<script>
+
+
+const grid=document.getElementById('card-grid');
+const checkedIndices=[0,1,2,3];
+
+const images=[
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg',
+'images/image.jpg'
+];
+
+for(let i=0;i<images.length;i++){
+const isChecked=checkedIndices.includes(i);
+const card=document.createElement('div');
+card.className='image-card animate-reveal flex flex-col items-center';
+card.style.animationDelay=`${i*0.05}s`;
+
+card.innerHTML=`
+<div class="relative group w-full">
+<div class="aspect-[4/5] w-full rounded-[13px] overflow-hidden  group-hover:shadow-lg transition-all duration-300">
+<img src="${images[i % images.length]}" class="w-full rounded-[13px] h-full object-cover">
+</div>
+
+<button class="trash-btn absolute top-2 right-2 w-8 h-8 bg-white rounded-full shadow opacity-100 lg:opacity-0 transition-opacity flex items-center justify-center hover:text-red-500">
+<i class="fa-solid fa-trash-can text-xs"></i>
+</button>
+<div onclick="videoOpen('https://www.youtube.com/embed/Cmtoos9Qwwo?si=XYuIHJ8gUY_8kzcG')" class="text-white bg-[#F36E21]/80 flex items-center justify-center lg:w-[50px] sm:w-[40px] w-[30px] aspect-square absolute bottom-0 left-0 right-0 top-0 m-auto rounded-full left-0">
+    <i class="fa-regular fa-circle-play lg:text-3xl sm:text-2xl text-xl"></i> 
+</div>
+
+<label class="absolute bottom-0 right-0 p-[15px] rounded-[10px] rounded-br-0 bg-white cursor-pointer custom-checkbox">
+<input type="checkbox" class="hidden" ${isChecked ? 'checked' : ''}>
+<div class="checkbox-box w-5 h-5 bg-white border border-gray-300 rounded flex items-center justify-center">
+<i class="fa-solid fa-check text-[10px] hidden"></i>
+</div>
+</label>
+</div>
+
+<p class="lg:text-lg sm:text-base text-sm text-black mt-3 font-medium w-full truncate px-2">
+Merry Christmas
+</p>`;
+
+grid.appendChild(card);
+}
+
+new Sortable(grid,{
+animation:300,
+ghostClass:'sortable-ghost',
+chosenClass:'sortable-chosen',
+dragClass:'sortable-drag',
+easing:"cubic-bezier(0.22,1,0.36,1)",
+onEnd:function(){
+const cards=[...document.querySelectorAll('.image-card')];
+const order=cards.map((card,index)=>index);
+console.log('New Order:',order);
+}
+});
+
+document.addEventListener('click',function(e){
+const trashBtn=e.target.closest('.trash-btn');
+if(!trashBtn) return;
+
+const card=trashBtn.closest('.image-card');
+card.style.transform='scale(.8)';
+card.style.opacity='0';
+
+setTimeout(()=>{
+card.remove();
+},300);
+});
+</script>
+<script src="script.js"></script>
+<!-- <script src="details.js"></script> -->
+
+</body>
+</html>

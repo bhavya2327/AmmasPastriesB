@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amma's Pastries | Luxury Bakery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+	<link rel="stylesheet" href="style.css" rel="stylesheet"/>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"
+		integrity="sha512-tS3S5qG0BlhnQROyJXvNjeEM4UpMXHrQfTGmbQ1gKmelCxlSEBUaxhRBj/EFTzpbP4RVSrpEikbmdJobCvhE3g=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<link rel="stylesheet"
+		href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css"
+		integrity="sha512-sMXtMNL1zRzolHYKEujM2AqCLUR9F2C4/05cdbxjjLSRvMQIciEPCQZo++nk7go3BtSuK9kfa/s+a4f4i5pLkw=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"
+		integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw=="
+		crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body class="overflow-hidden">
+        <section class="relative h-[100dvh] w-full flex items-center justify-center overflow-hidden">
+         <div class="flex absolute top-0 z-20 w-full justify-between px-10 pt-6">
+        <div class=" fade-in-up" style="animation-delay: 0.5s;">
+			<img src="images/logo.svg">
+		</div>
+      <div>  
+<!-- Mobile Menu Button -->
+<button
+    id="homeMenuBtn"
+    onclick="homeToggleMenu()"
+    class="lg:hidden text-3xl text-black fixed top-4 right-4 z-[60] w-10 h-10 rounded-xl bg-white/50 backdrop-blur-md flex items-center justify-center ">
+    ☰
+</button>
+
+<!-- Overlay -->
+<div
+    id="homeMenuOverlay"
+    onclick="homeCloseMenu()"
+    class="hidden fixed inset-0 bg-black/50 z-40">
+</div>
+
+<!-- Menu -->
+<!-- <div
+    id="homeMenuCard"
+    class="fixed top-0 right-0 h-screen w-[280px] bg-white z-50 p-6 transform translate-x-full transition-transform duration-300 lg:translate-x-0 lg:static lg:h-auto lg:w-72">
+
+    <h3 class="text-xl mb-4 text-center">
+        Pick Your Order
+    </h3>
+
+    <div class="space-y-3">
+        <a href="#" class="block p-3 bg-orange-500 text-white rounded-lg text-center">CROISSANTS</a>
+        <a href="#" class="block p-3 bg-orange-500 text-white rounded-lg text-center">DANISH PASTRIES</a>
+        <a href="#" class="block p-3 bg-orange-500 text-white rounded-lg text-center">ARTISAN BREAD</a>
+        <a href="#" class="block p-3 bg-orange-500 text-white rounded-lg text-center">CUPCAKES</a>
+    </div>
+</div> -->
+
+<!-- Menu Card -->
+<div
+    id="homeMenuCard"
+    class="
+    fixed lg:static
+    top-0 right-0
+    lg:block
+    h-screen lg:h-auto
+    w-[280px] lg:w-72
+    hidden
+    
+    transition-transform duration-300
+    z-50 lg:z-10
+    glass-card
+    rounded-none lg:rounded-2xl
+    p-6
+    fade-in-up">
+
+    <h3 class="serif text-white text-xl mb-4 text-center italic">
+        Pick Your Order
+    </h3>
+
+    <div class="space-y-3">
+
+        <a href="image.html"
+           class="homeMenuLink w-full py-3 block text-center px-4 banner-gradient text-white rounded-lg transition-all duration-300 font-medium tracking-wide">
+            CROISSANTS
+        </a>
+
+        <a href="image.html"
+           class="homeMenuLink w-full py-3 block text-center px-4 banner-gradient text-white rounded-lg transition-all duration-300 font-medium tracking-wide">
+            DANISH PASTRIES
+        </a>
+
+        <a href="image.html"
+           class="homeMenuLink w-full py-3 block text-center px-4 banner-gradient text-white rounded-lg transition-all duration-300 font-medium tracking-wide">
+            ARTISAN BREAD
+        </a>
+
+        <a href="image.html"
+           class="homeMenuLink w-full py-3 block text-center px-4 banner-gradient text-white rounded-lg transition-all duration-300 font-medium tracking-wide">
+            CUPCAKES
+        </a>
+
+    </div>
+</div>
+</div>
+        </div>
+        <div class="absolute bottom-20 rotate-[358deg] w-full banner-gradient py-4  z-20 overflow-hidden">
+            <div class="animate-marquee whitespace-nowrap xl:text-[40px] lg:text-[35px] sm:text-[30px] text-[20px] text-white font-bold tracking-[0%] uppercase">
+                <div class="flex items-center space-x-12">
+                    <span class="">Amma's Pastries</span>
+                    <span class="">*</span>
+                    <span class="">Amma's Pastries</span>
+                    <span class="">*</span>
+                    <span class="">Amma's Pastries</span>
+                    <span class="">*</span>
+                    <span class="">Amma's Pastries</span>
+                    <span class="">*</span>
+                </div>
+                <!-- Duplicate for seamless loop -->
+                <div class="flex items-center space-x-12 ml-12">
+                    <span class="">Amma's Pastries</span>
+                    <span class="">*</span>
+                    <span class="">Amma's Pastries</span>
+                    <span class="">*</span>
+                    <span class="">Amma's Pastries</span>
+                    <span class="">*</span>
+                    <span class="">Amma's Pastries</span>
+                    <span class="">*</span>
+                </div>
+            </div>
+        </div>
+        
+    <div class="owl-carousel home-carousel text-white h-[100dvh] ">
+				<div class="flex items-end  bg-cover bg-no-repeat w-full h-[100dvh] bg-[url('images/banner.jpg')]">
+					<div class="absolute w-full h-[100dvh] home-grediant"></div>
+					<div class=" h-[100dvh]  flex justify-center flex-col  container  px-4  mx-auto  ">
+						<div class="lg:w-5/12 sm:w-10/12 w-11/12 lg:space-y-4 sm:space-y-2 space-y-1">
+							<div class="lg:text-2xl sm:text-xl text-lg capitalize animate-text opacity-0">Experience. Precision. Since 2021.</div>
+							<h1 class="urbanist animate-text uppercase leading-tight  2xl:text-[55px] xl:text-[50px] lg:text-[40px] sm:text-[30px] text-[25px]  opacity-0 font-bold">15 years of expertise, freshly baked in Bangalore.</h1>
+							<p class="animate-text lg:text-base text-sm opacity-0">Founded by industry veteran Mr. Muthu Raju, Pixo India blends 15+ years of domain mastery with modern innovation to deliver signage that stands the test of time and trend.</p>
+								<button class="urbanist animate-text opacity-0 cursor-pointer lg:!mt-6 sm:!mt-4 !mt-3 lg:text-lg  sm:text-base text-sm  border border-white hover:border-[#EF7F1A] group lg:px-7 sm:px-5 px-3 py-2 font-bold text-[#EF7F1A] overflow-hidden transition-all duration-500 ease-out hover:scale-105  before:content-[''] before:absolute before:inset-0 before:bg-[#EF7F1A] before:scale-x-0 before:origin-left before:transition-transform before:duration-500 hover:before:z-[9] hover:before:scale-x-100 hover:text-white">
+									<span class="flex gap-4 items-center z-[9] relative">Explore More
+										<div class="w-[22px] h-[22px] rounded-full border-2 flex justify-center items-center border-[#EF7F1A] group-hover:border-white">
+											 <i class="fa-solid fa-angle-right lg:text-[14px] text-[12px] lg:leading-[14px] leading-[12px] "></i>
+										</div>
+									</span>
+								</button>
+						</div>
+					</div>
+				</div>
+				<div class="flex items-end  bg-cover bg-no-repeat w-full h-[100dvh] bg-[url('images/banner.jpg')]">
+					<div class="absolute w-full h-[100dvh] home-grediant"></div>
+					<div class=" h-[100dvh]  flex justify-center flex-col  container  px-4  mx-auto  ">
+						<div class="lg:w-5/12 sm:w-10/12 w-11/12 lg:space-y-4 sm:space-y-2 space-y-1">
+							<div class="lg:text-2xl sm:text-xl text-lg capitalize animate-text opacity-0">From Vinyl. To Video.</div>
+							<h1 class="urbanist animate-text uppercase leading-tight  2xl:text-[55px] xl:text-[50px] lg:text-[40px] sm:text-[30px] text-[25px]  opacity-0 font-bold">12+ signage solutions. One reliable partner.</h1>
+							<p class="animate-text lg:text-base text-sm opacity-0">Whether you need a frosty glass etch for privacy or a high-impact video wall for engagement, we are your single point of contact for every visual communication need imaginable.</p>
+								<button class="urbanist animate-text opacity-0 cursor-pointer lg:!mt-6 sm:!mt-4 !mt-3 lg:text-lg  sm:text-base text-sm  border border-white hover:border-[#EF7F1A] group lg:px-7 sm:px-5 px-3 py-2 font-bold text-[#EF7F1A] overflow-hidden transition-all duration-500 ease-out hover:scale-105  before:content-[''] before:absolute before:inset-0 before:bg-[#EF7F1A] before:scale-x-0 before:origin-left before:transition-transform before:duration-500 hover:before:z-[9] hover:before:scale-x-100 hover:text-white">
+									<span class="flex gap-4 items-center z-[9] relative">Explore More
+										<div class="w-[22px] h-[22px] rounded-full border-2 flex justify-center items-center border-[#EF7F1A] group-hover:border-white">
+											 <i class="fa-solid fa-angle-right lg:text-[14px] text-[12px] lg:leading-[14px] leading-[12px] "></i>
+										</div>
+									</span>
+								</button>
+						</div>
+					</div>
+				</div>
+				<div class="flex items-end  bg-cover bg-no-repeat w-full h-[100dvh] bg-[url('images/banner.jpg')]">
+					<div class="absolute w-full h-[100dvh] home-grediant"></div>
+					<div class=" h-[100dvh]  flex justify-center flex-col  container  px-4  mx-auto  ">
+						<div class="lg:w-5/12 sm:w-10/12 w-11/12 lg:space-y-4 sm:space-y-2 space-y-1">
+							<div class="lg:text-2xl sm:text-xl text-lg capitalize animate-text opacity-0">Crafting Impressions. Building Brands.</div>
+							<h1 class="urbanist animate-text uppercase leading-tight  2xl:text-[55px] xl:text-[50px] lg:text-[40px] sm:text-[30px] text-[25px]  opacity-0 font-bold">Sub Where premium materials meet flawless fabrication.</h1>
+							<p class="animate-text lg:text-base text-sm opacity-0">We believe a sign is more than just text; it’s a texture. Using premium materials from glass to fabric, we ensure your brand’s physical presence feels as premium as your service.</p>
+								<button class="urbanist animate-text opacity-0 cursor-pointer lg:!mt-6 sm:!mt-4 !mt-3 lg:text-lg  sm:text-base text-sm  border border-white hover:border-[#EF7F1A] group lg:px-7 sm:px-5 px-3 py-2 font-bold text-[#EF7F1A] overflow-hidden transition-all duration-500 ease-out hover:scale-105  before:content-[''] before:absolute before:inset-0 before:bg-[#EF7F1A] before:scale-x-0 before:origin-left before:transition-transform before:duration-500 hover:before:z-[9] hover:before:scale-x-100 hover:text-white">
+									<span class="flex gap-4 items-center z-[9] relative">Explore More
+										<div class="w-[22px] h-[22px] rounded-full border-2 flex justify-center items-center border-[#EF7F1A] group-hover:border-white">
+											 <i class="fa-solid fa-angle-right lg:text-[14px] text-[12px] lg:leading-[14px] leading-[12px] "></i>
+										</div>
+									</span>
+								</button>
+						</div>
+					</div>
+				</div>
+				<div class="flex items-end  bg-cover bg-no-repeat w-full h-[100dvh] bg-[url('images/banner.jpg')]">
+					<div class="absolute w-full h-[100dvh] home-grediant"></div>
+					<div class=" h-[100dvh]  flex justify-center flex-col  container  px-4  mx-auto  ">
+						<div class="lg:w-5/12 sm:w-10/12 w-11/12 lg:space-y-4 sm:space-y-2 space-y-1">
+							<div class="lg:text-2xl sm:text-xl text-lg capitalize animate-text opacity-0">Guiding People. Building Trust.</div>
+							<h1 class="urbanist animate-text uppercase leading-tight  2xl:text-[55px] xl:text-[50px] lg:text-[40px] sm:text-[30px] text-[25px]  opacity-0 font-bold">Clear direction for hospitals, apartments & corporates.</h1>
+							<p class="animate-text lg:text-base text-sm opacity-0">In complex environments like hospitals and tech parks, confusion is not an option. We design intuitive directional signage that streamlines movement and enhances the visitor experience.</p>
+								<button class="urbanist animate-text opacity-0 cursor-pointer lg:!mt-6 sm:!mt-4 !mt-3 lg:text-lg  sm:text-base text-sm  border border-white hover:border-[#EF7F1A] group lg:px-7 sm:px-5 px-3 py-2 font-bold text-[#EF7F1A] overflow-hidden transition-all duration-500 ease-out hover:scale-105  before:content-[''] before:absolute before:inset-0 before:bg-[#EF7F1A] before:scale-x-0 before:origin-left before:transition-transform before:duration-500 hover:before:z-[9] hover:before:scale-x-100 hover:text-white">
+									<span class="flex gap-4 items-center z-[9] relative">Explore More
+										<div class="w-[22px] h-[22px] rounded-full border-2 flex justify-center items-center border-[#EF7F1A] group-hover:border-white">
+											 <i class="fa-solid fa-angle-right lg:text-[14px] text-[12px] lg:leading-[14px] leading-[12px] "></i>
+										</div>
+									</span>
+								</button>
+						</div>
+					</div>
+				</div>
+				<div class="flex items-end  bg-cover bg-no-repeat w-full h-[100dvh] bg-[url('images/banner.jpg')]">
+					<div class="absolute w-full h-[100dvh] home-grediant"></div>
+					<div class=" h-[100dvh]  flex justify-center flex-col  container  px-4  mx-auto  ">
+						<div class="lg:w-5/12 sm:w-10/12 w-11/12 lg:space-y-4 sm:space-y-2 space-y-1">
+							<div class="lg:text-2xl sm:text-xl text-lg capitalize animate-text opacity-0">Seen By Thousands. Daily.</div>
+							<h1 class="urbanist animate-text uppercase leading-tight  2xl:text-[55px] xl:text-[50px] lg:text-[40px] sm:text-[30px] text-[25px]  opacity-0 font-bold">Outdoor signage that works 24/7 for you.</h1>
+							<p class="animate-text lg:text-base text-sm opacity-0">From towering Pylons that announce your presence to vibrant Shop boards that stop traffic, we build weather-proof signage designed to capture attention and drive footfall day and night.</p>
+							 <p class="animate-text lg:text-base text-sm opacity-0"> A dusk or twilight shot of a beautifully lit Pylon sign or a glowing Shop Front sign against the Bangalore night sky.</p>
+								<button class="urbanist animate-text opacity-0 cursor-pointer lg:!mt-6 sm:!mt-4 !mt-3 lg:text-lg  sm:text-base text-sm  border border-white hover:border-[#EF7F1A] group lg:px-7 sm:px-5 px-3 py-2 font-bold text-[#EF7F1A] overflow-hidden transition-all duration-500 ease-out hover:scale-105  before:content-[''] before:absolute before:inset-0 before:bg-[#EF7F1A] before:scale-x-0 before:origin-left before:transition-transform before:duration-500 hover:before:z-[9] hover:before:scale-x-100 hover:text-white">
+									<span class="flex gap-4 items-center z-[9] relative">Explore More
+										<div class="w-[22px] h-[22px] rounded-full border-2 flex justify-center items-center border-[#EF7F1A] group-hover:border-white">
+											 <i class="fa-solid fa-angle-right lg:text-[14px] text-[12px] lg:leading-[14px] leading-[12px] "></i>
+										</div>
+									</span>
+								</button>
+						</div>
+					</div>
+				</div>
+			</div>
+    </section>
+    
+
+    <!-- Optional JS for scroll interactions -->
+    <script>
+        $('.home-carousel').owlCarousel({
+  autoplay: true,
+  autoplayTimeout: 5000,
+  autoplayHoverPause: false,
+  loop: true,
+  responsiveClass: true,
+  nav: false,
+  dots: false,
+  slideTransition: 'linear',
+  autoplaySpeed: 1500,
+  smartSpeed: 1500,
+  items: 1 
+});
+const homeMenuCard = document.getElementById('homeMenuCard');
+const homeMenuOverlay = document.getElementById('homeMenuOverlay');
+
+function homeToggleMenu() {
+        // homeMenuCard.classList.toggle('hidden');
+
+    homeMenuCard.classList.toggle('hidden');
+    homeMenuOverlay.classList.toggle('hidden');
+}
+
+function homeCloseMenu() {
+    homeMenuCard.classList.add('hidden');
+    homeMenuOverlay.classList.add('hidden');
+}
+      
+    </script>
+</body>
+</html>

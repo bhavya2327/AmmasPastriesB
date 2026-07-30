@@ -1,0 +1,85 @@
+service: ammas-pastries-backend
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ap-south-1
+  stage: prod
+  profile: default
+  environment:
+    DYNAMODB_TABLE: ${self:service}-db-v2
+    S3_BUCKET_NAME: ${self:service}-media-${aws:accountId}-${self:provider.region}
+    ADMIN_PASSWORD: ${env:ADMIN_PASSWORD, 'ammas123'}
+    BRANCH_PASSWORD: ${env:BRANCH_PASSWORD, 'branch123'}
+  iam:
+    role:
+      statements:
+        # Permission to read/write to DynamoDB table
+        - Effect: Allow
+          Action:
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+          Resource:
+            - Fn::GetAtt: [ DynamoDBTable, Arn ]
+        # Permission to upload files to S3
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:PutObjectAcl
+          Resource:
+            - arn:aws:s3:::${self:provider.environment.S3_BUCKET_NAME}/*
+
+functions:
+  api:
+    handler: server.handler
+    timeout: 30
+    memorySize: 512
+    events:
+      - httpApi: '*' # Routes all HTTP traffic directly to Express app
+
+resources:
+  Resources:
+    # DynamoDB Table
+    DynamoDBTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST # Serverless: only pay for requests
+
+    # S3 Media Uploads Bucket
+    MediaBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:provider.environment.S3_BUCKET_NAME}
+        OwnershipControls:
+          Rules:
+            - ObjectOwnership: BucketOwnerPreferred # Enables S3 object ACLs
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: false
+          IgnorePublicAcls: false
+          BlockPublicPolicy: false
+          RestrictPublicBuckets: false
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders: ['*']
+              AllowedMethods: [GET, PUT, POST, DELETE, HEAD]
+              AllowedOrigins: ['*']
+
+    # Allow public read on all uploaded media
+    MediaBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: !Ref MediaBucket
+        PolicyDocument:
+          Statement:
+            - Effect: Allow
+              Principal: '*'
+              Action: s3:GetObject
+              Resource: !Sub 'arn:aws:s3:::${self:provider.environment.S3_BUCKET_NAME}/*'

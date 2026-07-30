@@ -1,0 +1,139 @@
+<header>
+<div id="overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-30 hidden lg:hidden"></div>
+
+<aside id="sidebar" class="fixed inset-y-0 left-0 w-72 h-[100dvh] bg-white border-r border-[#CCCCCC] z-40 transform -translate-x-full lg:translate-x-0 lg:static flex flex-col">
+<div class="p-8 flex flex-col items-center border-b border-[#CCCCCC]">
+    <img src="images/logo.svg" class="w-[110px] h-[110px]">
+</div>
+
+<nav class="flex-1 px-14 space-y-4 mt-4 font-bold lg:text-xl sm:text-lg text-base">
+<a href="image.html" class="block font-medium menu-link">Image</a>
+<a href="video.html" class="block font-medium menu-link">Video</a>
+<a href="announcements.html" class="block font-medium menu-link">Announcements</a>
+<a href="branch.html" class="block font-medium menu-link">Branch</a>
+</nav>
+<div class="p-6 lg:hidden">
+<button onclick="toggleSidebar()" class="w-full py-3 rounded-xl bg-gray-100  text-sm font-semibold">Close Menu</button>
+</div>
+</aside>
+</header> 
+    <!-- MODAL CONTAINER -->
+        <div id="branchPopupWrapper" onclick="closeBranchPopup()" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay bg-black/80">
+    <div id="branchPopup" onclick="event.stopPropagation()"  class=" bg-[url('images/popupbg.png')] bg-cover bg-no-repeat rounded-[40px] shadow-2xl w-full max-w-4xl max-h-[calc(100dvh-100px)] overflow-y-auto p-8 md:p-12 relative">
+        
+        <!-- TOP SECTION: SELECT ALL -->
+        <div class="flex items-center gap-3 mb-8">
+            <input type="checkbox" id="selectAllBtn" class="clone-checkbox" onclick="toggleAllCheckboxes(this)">
+            <label for="selectAllBtn" class="lg:text-lg sm:text-base text-sm text-black capitalize  cursor-pointer">Select All</label>
+        </div>
+
+        <!-- MAIN CONTENT: GRID OF BRANCHES -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+            
+            <!-- Column 1 -->
+            <div class="space-y-4">
+                <h3 class="lg:text-2xl sm:text-xl text-lg font-medium literata text-[#D3540A]">Karnataka</h3>
+                <div class="flex flex-col lg:text-lg sm:text-base text-sm text-black capitalize sm:gap-y-2 gap-y-1">
+                    <label class="flex items-center gap-3  cursor-pointer">
+                        <input type="checkbox" class="branch-item clone-checkbox" value="Kammanahalli" onclick="checkMasterStatus()"> Kammanahalli
+                    </label>
+                    <label class="flex items-center gap-3  cursor-pointer">
+                        <input type="checkbox" class="branch-item clone-checkbox" value="Indranagar" onclick="checkMasterStatus()"> Indranagar
+                    </label>
+                    <label class="flex items-center gap-3  cursor-pointer">
+                        <input type="checkbox" class="branch-item clone-checkbox" value="Kalyan Nagar" onclick="checkMasterStatus()"> Kalyan Nagar
+                    </label>
+                    <label class="flex items-center gap-3  cursor-pointer">
+                        <input type="checkbox" class="branch-item clone-checkbox" value="Jayanagar" onclick="checkMasterStatus()"> Jayanagar
+                    </label>
+                    <label class="flex items-center gap-3  cursor-pointer">
+                        <input type="checkbox" class="branch-item clone-checkbox" value="Koramangala" onclick="checkMasterStatus()"> Koramangala
+                    </label>
+                </div>
+            </div>
+
+            <!-- Column 2 -->
+            <div class="space-y-4">
+                <h3 class="lg:text-2xl sm:text-xl text-lg font-medium literata text-[#D3540A]">Karnataka</h3>
+                <div class="flex flex-col lg:text-lg sm:text-base text-sm text-black capitalize sm:gap-y-2 gap-y-1">
+                    <label class="flex items-center gap-3  cursor-pointer">
+                        <input type="checkbox" class="branch-item clone-checkbox" value="Kammanahalli-2" onclick="checkMasterStatus()"> Kammanahalli
+                    </label>
+                    <label class="flex items-center gap-3  cursor-pointer">
+                        <input type="checkbox" class="branch-item clone-checkbox" value="Indranagar-2" onclick="checkMasterStatus()"> Indranagar
+                    </label>
+                    <label class="flex items-center gap-3  cursor-pointer">
+                        <input type="checkbox" class="branch-item clone-checkbox" value="Kalyan Nagar-2" onclick="checkMasterStatus()"> Kalyan Nagar
+                    </label>
+                    <label class="flex items-center gap-3  cursor-pointer">
+                        <input type="checkbox" class="branch-item clone-checkbox" value="Jayanagar-2" onclick="checkMasterStatus()"> Jayanagar
+                    </label>
+                    <label class="flex items-center gap-3  cursor-pointer">
+                        <input type="checkbox" class="branch-item clone-checkbox" value="Koramangala-2" onclick="checkMasterStatus()"> Koramangala
+                    </label>
+                </div>
+            </div>
+
+            <!-- Column 3 -->
+            <div class="space-y-4">
+                <h3 class="lg:text-2xl sm:text-xl text-lg font-medium literata text-[#D3540A]">Karnataka</h3>
+                <div class="flex flex-col lg:text-lg sm:text-base text-sm text-black capitalize sm:gap-y-2 gap-y-1">
+                    <label class="flex items-center gap-3  cursor-pointer">
+                        <input type="checkbox" class="branch-item clone-checkbox" value="Kammanahalli-3" onclick="checkMasterStatus()"> Kammanahalli
+                    </label>
+                    <label class="flex items-center gap-3  cursor-pointer">
+                        <input type="checkbox" class="branch-item clone-checkbox" value="Indranagar-3" onclick="checkMasterStatus()"> Indranagar
+                    </label>
+                    <label class="flex items-center gap-3  cursor-pointer">
+                        <input type="checkbox" class="branch-item clone-checkbox" value="Kalyan Nagar-3" onclick="checkMasterStatus()"> Kalyan Nagar
+                    </label>
+                    <label class="flex items-center gap-3  cursor-pointer">
+                        <input type="checkbox" class="branch-item clone-checkbox" value="Jayanagar-3" onclick="checkMasterStatus()"> Jayanagar
+                    </label>
+                    <label class="flex items-center gap-3  cursor-pointer">
+                        <input type="checkbox" class="branch-item clone-checkbox" value="Koramangala-3" onclick="checkMasterStatus()"> Koramangala
+                    </label>
+                </div>
+            </div>
+
+            <!-- Column 4 -->
+            <div class="space-y-4">
+                <h3 class="lg:text-2xl sm:text-xl text-lg font-medium literata text-[#D3540A]">Karnataka</h3>
+                <div class="flex flex-col lg:text-lg sm:text-base text-sm text-black capitalize sm:gap-y-2 gap-y-1">
+                    <label class="flex items-center gap-3  cursor-pointer">
+                        <input type="checkbox" class="branch-item clone-checkbox" value="Kammanahalli-4" onclick="checkMasterStatus()"> Kammanahalli
+                    </label>
+                    <label class="flex items-center gap-3  cursor-pointer">
+                        <input type="checkbox" class="branch-item clone-checkbox" value="Indranagar-4" onclick="checkMasterStatus()"> Indranagar
+                    </label>
+                    <label class="flex items-center gap-3  cursor-pointer">
+                        <input type="checkbox" class="branch-item clone-checkbox" value="Kalyan Nagar-4" onclick="checkMasterStatus()"> Kalyan Nagar
+                    </label>
+                    <label class="flex items-center gap-3  cursor-pointer">
+                        <input type="checkbox" class="branch-item clone-checkbox" value="Jayanagar-4" onclick="checkMasterStatus()"> Jayanagar
+                    </label>
+                    <label class="flex items-center gap-3  cursor-pointer">
+                        <input type="checkbox" class="branch-item clone-checkbox" value="Koramangala-4" onclick="checkMasterStatus()"> Koramangala
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+         <div class="flex justify-end lg:mt-8 sm:mt-6 mt-4">
+             <button onclick="applySelection()" class="flex-1 md:flex-none px-6 md:px-8 py-2 border border-[#F36E21] lg:rounded-[10px] sm:rounded-[8px] rounded-[6px] lg:text-[17px] sm:text-[15px] text-[13px] font-medium banner-gradient text-white">Apply</button>
+        </div>
+        
+    </div>
+</div>
+
+<!-- Video Popup -->
+<div id="videoOverlay" onclick="videoOverlay(event)" class="videoOverlay fixed inset-0 bg-black/70 bg-opacity-70 hidden z-50 flex items-center justify-center">
+    <div id="videoContainer" class="videoContainer relative bg-white rounded-lg shadow-lg w-11/12 max-w-3xl aspect-video">
+      <button id="videoCloseBtn" onclick="videoClose()" class="videoCloseBtn absolute top-2 right-2 text-white bg-black rounded-full p-1 w-8 h-8 flex items-center justify-center z-10">
+        ✕
+      </button>
+             <iframe id="videoIframe" class="videoIframe w-full h-full rounded-lg" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+    </div>
+  </div>

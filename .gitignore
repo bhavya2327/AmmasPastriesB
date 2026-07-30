@@ -1,0 +1,27 @@
+# Dependency directories
+node_modules/
+
+# Local configuration / secrets
+.env
+.env.local
+.env.*.local
+
+# Serverless Framework build artifacts
+.serverless/
+
+# Local databases and uploads
+data/db.json
+uploads/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Log files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

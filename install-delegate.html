@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link id="pwa-manifest" rel="manifest" href="">
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const branch = params.get('branch') || 'default';
+    const start_url = params.get('start_url') || '/index.html';
+    const slug = branch.toLowerCase().trim().replace(/\s+/g, '-');
+    
+    const origin = window.location.origin;
+    const start_url_absolute = start_url.startsWith('http') ? start_url : origin + (start_url.startsWith('/') ? start_url : '/' + start_url);
+    
+    const manifest = {
+      id: `${origin}/app/${slug}`,
+      name: "Ammas Pastries",
+      short_name: "Ammas Pastries",
+      description: 'TV Display for ' + branch,
+      start_url: start_url_absolute,
+      display: 'fullscreen',
+      background_color: '#ffffff',
+      theme_color: '#F36E21',
+      icons: [
+        { src: `${origin}/images/logo-192-maskable.png`, sizes: '192x192', type: 'image/png', purpose: 'maskable' },
+        { src: `${origin}/images/logo-192.png`, sizes: '192x192', type: 'image/png', purpose: 'any' },
+        { src: `${origin}/images/logo-512.png`, sizes: '512x512', type: 'image/png', purpose: 'any' }
+      ]
+    };
+    
+    const manifestString = JSON.stringify(manifest);
+    const dataUri = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(manifestString);
+    document.getElementById('pwa-manifest').href = dataUri;
+    window.addEventListener('beforeinstallprompt', function(e) {
+        e.preventDefault();
+        if (window.parent && typeof window.parent.registerIframePrompt === 'function') {
+            window.parent.registerIframePrompt(branch, e);
+        }
+    });
+  </script>
+</head>
+<body></body>
+</html>

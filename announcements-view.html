@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<base href="/">
+<title>Amma's Pastries | Announcements</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body class="flex h-screen overflow-hidden">
+<div class="header"></div>
+
+<main class="flex-1 flex flex-col min-w-0">
+  <!-- Header row — same structure as media.html -->
+  <div class="p-4 md:p-8 lg:p-10">
+    <div class="flex items-center justify-between lg:pb-3 pb-2">
+      <div class="flex items-center gap-3">
+        <button onclick="toggleSidebar()" class="lg:hidden w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+        <!-- Branch name in orange, same as media.html -->
+        <h1 class="font-semibold text-[#F36E21] text-[28px] md:text-[38px] lg:text-[48px]">Kalyan Nagar</h1>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="testDisplaySign()"
+          class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-[#F36E21] text-[#F36E21] hover:bg-[#F36E21] hover:text-white transition-all">
+          <i class="fa-solid fa-desktop text-xs"></i>
+          <span class="uppercase whitespace-nowrap hidden sm:inline">Preview</span>
+        </button>
+      </div>
+    </div>
+    <hr class="border-[#CCCCCC]">
+  </div>
+
+  <!-- Read-only announcement list -->
+  <div class="flex-1 overflow-y-auto custom-scroll px-4 md:px-8 lg:px-10 pb-32">
+    <!-- Banner Settings Section -->
+    <div class="pb-8 border-b border-gray-100 mb-6 mt-4">
+        <h3 class="literata text-[22px] md:text-[28px] lg:text-[32px] leading-normal pb-4">Banner Settings</h3>
+        <div id="banner-setting-card" class="bg-gray-50 p-4 rounded-2xl flex items-center justify-between border border-gray-100 shadow-sm max-w-md">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-[#F36E21]/10 flex items-center justify-center text-[#F36E21]">
+                    <i class="fa-solid fa-scroll text-lg"></i>
+                </div>
+                <div>
+                    <p class="font-bold text-black text-sm md:text-base">Announcement Banner</p>
+                    <p class="text-xs text-gray-500">Show or hide scrolling text bar on TV</p>
+                </div>
+            </div>
+            <button id="bannerToggleBtn" onclick="toggleBannerClick()" class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none" style="background:#d1d5db">
+                <span id="bannerToggleKnob" class="inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform translate-x-1"></span>
+            </button>
+        </div>
+    </div>
+
+    <div id="announcement-list" class="space-y-3 mb-6 mt-4">
+      <!-- Loaded dynamically -->
+    </div>
+  </div>
+</main>
+
+<script src="script.js?v=3"></script>
+<script src="details.js?v=3"></script>
+</body>
+</html>

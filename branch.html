@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  const _role = localStorage.getItem('userRole');
+  if (!localStorage.getItem('adminToken') || _role !== 'admin') {
+    window.location.replace('/login');
+  }
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amma's Pastries | Branches</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link rel="stylesheet" href="style.css" rel="stylesheet"/>
+</head>
+<body class="flex h-screen overflow-hidden">
+<div class="header"></div>
+
+<main class="flex-1 flex flex-col min-w-0">
+<div class="p-4 md:p-8 lg:p-10 flex flex-wrap items-center justify-between gap-4">
+  <div class="flex items-center gap-4">
+    <button onclick="toggleSidebar()" class="lg:hidden w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+    <h1 class="literata text-[25px] md:text-[30px] lg:text-[35px]">Branches</h1>
+  </div>
+  <div class="flex items-center gap-3 flex-wrap">
+    <button onclick="openModal()" class="flex items-center gap-2 border border-[#CCCCCC] px-4 md:px-5 py-1 lg:rounded-[10px] sm:rounded-[8px] rounded-[6px] lg:text-[17px] sm:text-[15px] text-[13px] font-medium hover:text-white hover-gradient">
+      <i class="fa-solid fa-plus"></i>
+      <span class="uppercase whitespace-nowrap">Add Branch</span>
+    </button>
+    <button onclick="openDeleteModal()" class="flex items-center gap-2 border border-[#CCCCCC] px-4 md:px-5 py-1 lg:rounded-[10px] sm:rounded-[8px] rounded-[6px] lg:text-[17px] sm:text-[15px] text-[13px] font-medium hover:text-white hover-gradient">
+      <i class="fa-solid fa-trash-can"></i>
+      <span class="uppercase whitespace-nowrap">Delete Branch</span>
+    </button>
+  </div>
+</div>
+
+<div class="flex-1 overflow-y-auto custom-scroll px-4 md:px-8 lg:px-10 pb-32">
+  <div class="bg-[#F3F3F3] rounded-[12px] p-4 sm:p-6 md:p-8 lg:p-10">
+    <div id="branchGrid" class="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-y-12 gap-x-8 md:gap-x-12">
+      <!-- Dynamically populated from API -->
+    </div>
+  </div>
+</div>
+
+<!-- ADD BRANCH MODAL -->
+<div id="branchModal" class="hidden fixed inset-0 z-50 flex md:px-8 lg:px-10 pb-32 justify-end px-4">
+  <div class="lg:mt-32 relative bg-white rounded-2xl shadow-2xl p-6 h-max !pt-8 w-full max-w-sm border border-gray-100 animate-in fade-in zoom-in duration-200">
+    <div class="flex justify-end items-center absolute top-1 right-2">
+      <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="space-y-4 lg:text-lg font-medium sm:text-base text-sm">
+      <div>
+        <input type="text" id="branchName" placeholder="Branch Name"
+               class="w-full px-4 py-2 rounded-lg border border-[#F36E21] focus:outline-none focus:ring-1 focus:ring-[#E86A33] text-black">
+      </div>
+      <div id="stateSelectWrapper" class="relative">
+        <select id="stateName" class="w-full px-4 py-2 rounded-lg border border-[#F36E21] appearance-none focus:outline-none text-black bg-white">
+          <option value="" disabled selected>Select State</option>
+        </select>
+        <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-[10px] orange-text"></i>
+      </div>
+      <div class="flex justify-end lg:mt-8 sm:mt-6 mt-4">
+        <button onclick="handleBranchSubmit()" class="flex-1 md:flex-none px-6 md:px-8 py-2 border border-[#F36E21] lg:rounded-[10px] sm:rounded-[8px] rounded-[6px] lg:text-[17px] sm:text-[15px] text-[13px] font-medium banner-gradient text-white">Add</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE BRANCH MODAL -->
+<div id="deleteBranchModal" class="hidden fixed inset-0 z-50 flex md:px-8 lg:px-10 pb-32 justify-end px-4">
+  <div class="lg:mt-32 relative bg-white rounded-2xl shadow-2xl p-6 h-max !pt-8 w-full max-w-sm border border-gray-100 animate-in fade-in zoom-in duration-200">
+    <div class="flex justify-end items-center absolute top-1 right-2">
+      <button onclick="closeDeleteModal()" class="text-gray-400 hover:text-gray-600">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="space-y-4 lg:text-lg font-medium sm:text-base text-sm">
+      <div class="relative">
+        <select id="deleteBranchSelect" class="w-full px-4 py-2 rounded-lg border border-[#F36E21] appearance-none focus:outline-none text-black bg-white">
+          <!-- Dynamically populated from JS -->
+        </select>
+        <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-[10px] orange-text"></i>
+      </div>
+      <div class="flex justify-end lg:mt-8 sm:mt-6 mt-4">
+        <button onclick="handleBranchDeleteSubmit()" class="flex-1 md:flex-none px-6 md:px-8 py-2 border border-[#F36E21] lg:rounded-[10px] sm:rounded-[8px] rounded-[6px] lg:text-[17px] sm:text-[15px] text-[13px] font-medium banner-gradient text-white">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CUSTOM CONFIRMATION MODAL -->
+<div id="confirmDeleteModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+  <div class="bg-white rounded-2xl shadow-2xl p-6 md:p-8 max-w-sm w-full border border-gray-100 animate-in fade-in zoom-in-95 duration-200 text-center">
+    <div class="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+      <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
+    </div>
+    <h3 class="literata text-xl md:text-2xl font-bold text-gray-900 mb-2">Delete Branch?</h3>
+    <p class="text-sm md:text-base text-gray-500 mb-6">Are you sure you want to delete the branch <span id="confirmBranchName" class="font-bold text-[#F36E21]"></span>? This action is permanent and will delete all of its local data.</p>
+    <div class="flex gap-3">
+      <button onclick="closeConfirmDeleteModal()" class="flex-1 py-2 px-4 border border-[#CCCCCC] rounded-xl text-gray-700 hover:bg-gray-50 font-medium transition-all text-sm md:text-base cursor-pointer">Cancel</button>
+      <button id="confirmDeleteBtn" class="flex-1 py-2 px-4 bg-gradient-to-r from-[#F36E21] to-[#D3540A] text-white rounded-xl hover:shadow-lg font-medium transition-all text-sm md:text-base cursor-pointer">Delete</button>
+    </div>
+  </div>
+</div>
+</main>
+
+<script src="script.js"></script>
+<script>
+  window.onclick = function(event) {
+    if (event.target == document.getElementById('branchModal')) {
+      closeModal();
+    }
+    if (event.target == document.getElementById('deleteBranchModal')) {
+      closeDeleteModal();
+    }
+    if (event.target == document.getElementById('confirmDeleteModal')) {
+      closeConfirmDeleteModal();
+    }
+  }
+
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+  });
+
+  function copyBranchUrl(button, branchName) {
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in' || window.location.hostname.endsWith('amplifyapp.com');
+    const slug = branchName.toLowerCase().trim().replace(/\s+/g, '-');
+    const url = isCleanActive
+      ? window.location.origin + '/' + slug
+      : window.location.origin + '/media.html?branch=' + encodeURIComponent(branchName);
+    navigator.clipboard.writeText(url)
+      .then(() => {
+        showCopiedTooltip(button);
+      })
+      .catch(() => showToast('Could not copy URL', 'error'));
+  }
+
+
+  function showCopiedTooltip(button) {
+    const existing = button.querySelector('.copied-tooltip');
+    if (existing) existing.remove();
+
+    const tooltip = document.createElement('span');
+    tooltip.className = 'copied-tooltip absolute bottom-full left-1/2 -translate-x-1/2 mb-2 sm:mb-2.5 lg:mb-3 px-2.5 py-1 sm:px-3 sm:py-1.5 lg:px-4 lg:py-2 text-sm sm:text-base lg:text-lg bg-gradient-to-r from-[#F36E21] to-[#D3540A] text-white font-semibold rounded-lg shadow-xl shadow-[#F36E21]/20 opacity-0 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50';
+    tooltip.innerText = 'copied';
+    
+    button.classList.add('relative');
+    button.appendChild(tooltip);
+    
+    setTimeout(() => {
+      tooltip.classList.remove('opacity-0');
+      tooltip.classList.add('opacity-100');
+    }, 10);
+    
+    setTimeout(() => {
+      tooltip.classList.remove('opacity-100');
+      tooltip.classList.add('opacity-0');
+      setTimeout(() => tooltip.remove(), 200);
+    }, 1500);
+  }
+
+  async function downloadBranchPage(branchName) {
+    try {
+      showToast('Preparing download for ' + branchName + '... (fetching assets)', 'info');
+
+      const slug = branchName.toLowerCase().trim().replace(/\s+/g, '-');
+      const serverOrigin = window.location.origin;
+
+      // Helper: fetch a URL and return as base64 data URI
+      async function toDataUri(url, mimeType) {
+        const r = await fetch(url);
+        if (!r.ok) throw new Error('Could not fetch: ' + url);
+        const blob = await r.blob();
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+      }
+
+      // Helper: fetch a URL and return as text
+      async function toText(url) {
+        const r = await fetch(url);
+        if (!r.ok) throw new Error('Could not fetch: ' + url);
+        return r.text();
+      }
+
+      // ── Step 1: Fetch all assets in parallel (including logo.png) ─────────────
+      showToast('Embedding assets... please wait', 'info');
+      const [html, logoDataUri, bannerDataUri, popupbgDataUri, cssText, logoPngDataUri] = await Promise.all([
+        toText('/index.html'),
+        toDataUri('/images/Ammas%20logo.svg', 'image/svg+xml'),
+        toDataUri('/images/banner.jpg', 'image/jpeg'),
+        toDataUri('/images/popupbg.png', 'image/png'),
+        toText('/style.css'),
+        toDataUri('/images/logo.png')
+      ]);
+
+      let out = html;
+
+      // ── Step 2: Embed CSS inline (replace <link> tag for style.css) ──────────
+      const cleanCss = cssText.replace(/@import url\([^)]+\);?\s*/g, '');
+      const inlinedStyle = `<style id="ammas-inlined-css">
+${cleanCss}
+/* Google Fonts fallback for offline/file:// use */
+body { font-family: "Montserrat", Arial, sans-serif; }
+.literata { font-family: Georgia, serif; }
+</style>`;
+      out = out.replace(/<link[^>]+href=["'][^"']*style\.css[^"']*["'][^>]*>/i, inlinedStyle);
+
+      // ── Step 3: Embed logo SVG inline (fixes preloader + header logo) ────────
+      out = out.replace(/src=["']images\/Ammas%20logo\.svg["']/gi, `src="${logoDataUri}"`);
+      out = out.replace(/src=["']images\/Ammas logo\.svg["']/gi, `src="${logoDataUri}"`);
+
+      // ── Step 4: Embed banner.jpg inline (fixes carousel background) ──────────
+      out = out.replace(/src=["']images\/banner\.jpg["']/gi, `src="${bannerDataUri}"`);
+
+      // ── Step 5: Embed popupbg.png inline (fixes Pick Your Order background) ──
+      out = out.replace(/url\(['"]?[^'")\s]*popupbg\.png['"]?\)/gi, `url("${popupbgDataUri}")`);
+      out = out.replace(/src=["'][^"']*popupbg\.png["']/gi, `src="${popupbgDataUri}"`);
+
+      // ── Step 6: Remove <base href> — it causes file:// path confusion ─────────
+      out = out.replace(/<base\s+href=["'][^"']*["'][^>]*>\s*/i, '');
+
+      // ── Step 7: Inject window.__API_BASE__ FIRST in <head> ───────────────────
+      const apiBaseScript = `<script>window.__API_BASE__ = ${JSON.stringify(serverOrigin)};<\/script>`;
+      out = out.replace(/(<head[^>]*>)/i, '$1\n  ' + apiBaseScript);
+
+      // ── Step 8: Inject _presetBranch so the page skips the selector ──────────
+      const branchScript = `<script>window._presetBranch = ${JSON.stringify(branchName)};<\/script>`;
+      out = out.replace(/(<head[^>]*>)/i, '$1\n  ' + branchScript);
+
+      // ── Step 9: Fix all remaining relative /api/ fetch calls ─────────────────
+      const fetchPatch = `<script>
+(function(){
+  var _o=${JSON.stringify(serverOrigin)};
+  var _f=window.fetch;
+  window.fetch=function(u,opts){
+    if(typeof u==='string'&&u.startsWith('/')){u=_o+u;}
+    return _f(u,opts);
+  };
+})();
+<\/script>`;
+      out = out.replace(/(<head[^>]*>)/i, '$1\n  ' + fetchPatch);
+
+      // ── Step 10: Replace manifest with inline data URI containing base64 logo.png
+      const manifestData = {
+        name: "Amma's Pastries — " + branchName,
+        short_name: branchName,
+        description: 'TV Display for ' + branchName,
+        start_url: 'ammas-display-' + slug + '.html', // Make it launch the downloaded file directly
+        display: 'fullscreen',
+        background_color: '#ffffff',
+        theme_color: '#F36E21',
+        icons: [
+          { src: logoPngDataUri, sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+          { src: logoPngDataUri, sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
+          { src: logoPngDataUri, sizes: '512x512', type: 'image/png', purpose: 'any' }
+        ]
+      };
+      const manifestUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(manifestData));
+      out = out.replace(/<link\s+rel=["']manifest["'][^>]*>/i, `<link rel="manifest" href="${manifestUri}">`);
+
+      // ── Step 11: Add mobile / TV / icon meta tags using fully inlined base64 logoPngDataUri ──
+      const metaTags = `
+  <link rel="icon" type="image/png" href="${logoPngDataUri}">
+  <link rel="apple-touch-icon" href="${logoPngDataUri}">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="${branchName} Display">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="${branchName} Display">
+  <meta name="theme-color" content="#F36E21">`;
+      out = out.replace(/(<\/head>)/i, metaTags + '\n$1');
+
+      // ── Step 12: Set page title ───────────────────────────────────────────────
+      out = out.replace(/<title>[^<]*<\/title>/i, `<title>Amma's Pastries | ${branchName}</title>`);
+
+      // ── Download ──────────────────────────────────────────────────────────────
+      const blob = new Blob([out], { type: 'text/html;charset=utf-8' });
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = 'ammas-display-' + slug + '.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
+
+      showToast('✓ Downloaded: ammas-display-' + slug + '.html', 'success');
+    } catch (err) {
+      console.error('Download failed:', err);
+      showToast('Download failed: ' + err.message, 'error');
+    }
+  }
+
+  function openModal() {
+    const select = document.getElementById('stateName');
+    if (select) {
+      select.innerHTML = '';
+      
+      // Placeholder option
+      const placeholderOpt = document.createElement('option');
+      placeholderOpt.value = '';
+      placeholderOpt.disabled = true;
+      placeholderOpt.selected = true;
+      placeholderOpt.innerText = 'Select State';
+      select.appendChild(placeholderOpt);
+      
+      const defaultStates = [
+        "Andhra Pradesh",
+        "Arunachal Pradesh",
+        "Assam",
+        "Bihar",
+        "Chhattisgarh",
+        "Goa",
+        "Gujarat",
+        "Haryana",
+        "Himachal Pradesh",
+        "Jharkhand",
+        "Karnataka",
+        "Kerala",
+        "Madhya Pradesh",
+        "Maharashtra",
+        "Manipur",
+        "Meghalaya",
+        "Mizoram",
+        "Nagaland",
+        "Odisha",
+        "Punjab",
+        "Rajasthan",
+        "Sikkim",
+        "Tamil Nadu",
+        "Telangana",
+        "Tripura",
+        "Uttar Pradesh",
+        "Uttarakhand",
+        "West Bengal"
+      ];
+      const existingStates = [];
+      
+      if (window.allBranches && window.allBranches.length > 0) {
+        window.allBranches.forEach(b => {
+          if (b.state && !existingStates.includes(b.state) && !defaultStates.includes(b.state)) {
+            existingStates.push(b.state);
+          }
+        });
+      }
+      
+      const allUniqueStates = [...defaultStates].sort();
+      existingStates.sort().forEach(state => {
+        if (!allUniqueStates.includes(state)) {
+          allUniqueStates.push(state);
+        }
+      });
+      
+      allUniqueStates.forEach(state => {
+        const opt = document.createElement('option');
+        opt.value = state;
+        opt.innerText = state;
+        select.appendChild(opt);
+      });
+    }
+    
+    document.getElementById('branchModal').classList.remove('hidden');
+  }
+
+  function closeModal() {
+    document.getElementById('branchModal').classList.add('hidden');
+    document.getElementById('branchName').value = '';
+  }
+
+  function handleBranchSubmit() {
+    const branchName = document.getElementById('branchName').value.trim();
+    let state = document.getElementById('stateName').value;
+    
+    if (!state) {
+      showToast("Please select a state.", "error");
+      return;
+    }
+    
+    if (branchName === "") {
+      showToast("Please enter a branch name.", "error");
+      return;
+    }
+
+    const token = localStorage.getItem('adminToken') || '';
+    fetch('/api/branches', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': token
+      },
+      body: JSON.stringify({ name: branchName, state: state })
+    })
+    .then(res => {
+      if (!res.ok) {
+        return res.json().then(data => { throw new Error(data.error || 'Server error') });
+      }
+      return res.json();
+    })
+    .then(data => {
+      showToast("Branch added successfully!");
+      closeModal();
+      loadBranches();
+    })
+    .catch(err => {
+      showToast(err.message, "error");
+    });
+  }
+
+  function openDeleteModal() {
+    const select = document.getElementById('deleteBranchSelect');
+    if (!select) return;
+    select.innerHTML = '<option value="" disabled selected>Select Branch to Delete</option>';
+    
+    if (window.allBranches && window.allBranches.length > 0) {
+      window.allBranches.forEach(b => {
+        const opt = document.createElement('option');
+        opt.value = b.id;
+        opt.innerText = b.name;
+        select.appendChild(opt);
+      });
+    } else {
+      select.innerHTML = '<option value="" disabled>No branches available</option>';
+    }
+    
+    document.getElementById('deleteBranchModal').classList.remove('hidden');
+  }
+
+  // Same transition workflow as Add Modal
+  function closeDeleteModal() {
+    document.getElementById('deleteBranchModal').classList.add('hidden');
+  }
+
+  function handleBranchDeleteSubmit() {
+    const select = document.getElementById('deleteBranchSelect');
+    const branchId = select.value;
+    if (!branchId) {
+      showToast('Please select a branch to delete.', 'error');
+      return;
+    }
+
+    const selectedBranch = window.allBranches.find(b => b.id === branchId);
+    const branchName = selectedBranch ? selectedBranch.name : branchId;
+
+    // Show custom designed confirmation modal
+    document.getElementById('confirmBranchName').innerText = branchName;
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+    confirmBtn.onclick = function() {
+      executeBranchDelete(branchId, branchName);
+    };
+    document.getElementById('confirmDeleteModal').classList.remove('hidden');
+  }
+
+  function closeConfirmDeleteModal() {
+    document.getElementById('confirmDeleteModal').classList.add('hidden');
+  }
+
+  function executeBranchDelete(branchId, branchName) {
+    const token = localStorage.getItem('adminToken') || '';
+    fetch('/api/branches/' + encodeURIComponent(branchId), {
+      method: 'DELETE',
+      headers: {
+        'Authorization': token
+      }
+    })
+    .then(res => {
+      if (!res.ok) {
+        return res.json().then(err => { throw new Error(err.error || 'Delete failed') });
+      }
+      return res.json();
+    })
+    .then(() => {
+      showToast('Branch "' + branchName + '" deleted successfully!');
+      closeConfirmDeleteModal();
+      closeDeleteModal();
+      loadBranches();
+    })
+    .catch(err => {
+      console.error(err);
+      showToast('Failed to delete branch: ' + err.message, 'error');
+      closeConfirmDeleteModal();
+    });
+  }
+
+
+  function loadBranches() {
+    fetch('/api/branches')
+      .then(res => res.json())
+      .then(branches => {
+        window.allBranches = branches; // Store locally for delete drop-down selector
+        const grid = document.getElementById('branchGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
+
+        const grouped = {};
+        branches.forEach(b => {
+          if (!grouped[b.state]) grouped[b.state] = [];
+          grouped[b.state].push(b);
+        });
+
+        Object.keys(grouped).forEach(state => {
+          const col = document.createElement('div');
+          col.className = 'lg:space-y-4 sm:space-y-3 space-y-2';
+
+          let branchItemsHtml = '';
+          grouped[state].forEach(b => {
+            const statusIcon = b.online ? 'images/green.svg' : 'images/red.svg';
+            const slug = b.name.toLowerCase().trim().replace(/\s+/g, '-');
+            const link = '/admin/' + slug;
+            branchItemsHtml += `
+              <a href="${link}" class="grid grid-cols-[auto_1fr_auto] items-center gap-x-3 group py-2 border-b border-gray-100/50 text-black hover:text-[#F36E21] transition-all ease-in-out duration-300">
+                <img src="${statusIcon}" class="w-[16px] h-[16px] object-contain mt-[1px] flex-shrink-0">
+                <span class="font-medium truncate whitespace-nowrap min-w-0">${b.name}</span>
+                <div class="flex items-center gap-1 flex-shrink-0 justify-end">
+                  <button onclick="event.preventDefault(); event.stopPropagation(); copyBranchUrl(this, '${b.name.replace(/'/g, "\\'")}')" title="Copy display sign link" class="relative w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:text-[#F36E21] hover:bg-[#F36E21]/10 transition-all">
+                    <i class="fa-solid fa-link text-xs"></i>
+                  </button>
+                </div>
+              </a>
+            `;
+          });
+
+          col.innerHTML = `
+            <h6 class="lg:text-2xl sm:text-xl text-lg font-semibold literata text-[#D3540A] border-b border-[#D3540A]/20 pb-2 mb-2">${state}</h6>
+            <div class="lg:text-lg sm:text-base text-sm text-black capitalize space-y-2 sm:space-y-3">
+              ${branchItemsHtml}
+            </div>
+          `;
+          grid.appendChild(col);
+        });
+      })
+      .catch(err => console.error("Error loading branches:", err));
+  }
+
+  loadBranches();
+  setInterval(loadBranches, 15000); // Increased interval to 15s to prevent unnecessary iframe reload thrashing
+</script>
+</body>
+</html>

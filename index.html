@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+    (function() {
+        const params = new URLSearchParams(window.location.search);
+        const branch = params.get('branch') || window._presetBranch;
+        const pathname = window.location.pathname;
+        const parts = pathname.split('/').filter(Boolean);
+        const namedRoutes = ['login','branch','portal','details','announcements','orders','image','video','apk','header','index1','ammas-pastries','media','admin'];
+        
+        const isCleanMedia = parts.length === 1 && !namedRoutes.includes(parts[0]) && !parts[0].includes('.');
+        const isCleanSubPath = parts.length === 2 && ['announcements', 'orders', 'portal'].includes(parts[0]);
+        const isTvPath = pathname.startsWith('/ammas-pastries/') || isCleanMedia || isCleanSubPath;
+        if (!branch && !isTvPath) {
+            if (!localStorage.getItem('adminToken') || localStorage.getItem('userRole') !== 'admin') {
+                window.location.replace('/login');
+            }
+        }
+    })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/">
+    <title>Amma's Pastries | Store Display Sign</title>
+    <link id="pwa-manifest" rel="manifest" href="/manifest.json">
+    <script>
+    // Capture beforeinstallprompt early for TV display
+    window.deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', function(e) {
+        e.preventDefault();
+        window.deferredPrompt = e;
+        console.log('[PWA] captured beforeinstallprompt in index.html');
+        
+        var params = new URLSearchParams(window.location.search);
+        
+        // Pass event to parent window if loaded in iframe for branch.html installation flow
+        if (params.get('iframe_install') === 'true') {
+            if (window.parent) {
+                window.parent.iframeDeferredPrompt = e;
+                window.parent.iframeDeferredPromptBranch = params.get('branch');
+                if (typeof window.parent.triggerPwaPrompt === 'function') {
+                    window.parent.triggerPwaPrompt(e);
+                }
+            }
+        }
+        
+        // Auto-trigger installation and redirect back to branch page if install=true is present
+        if (params.get('install') === 'true') {
+            setTimeout(async function() {
+                if (window.deferredPrompt) {
+                    try {
+                        await window.deferredPrompt.prompt();
+                        const { outcome } = await window.deferredPrompt.userChoice;
+                        console.log('Index auto PWA outcome:', outcome);
+                    } catch (err) {
+                        console.error('Index auto PWA error:', err);
+                    } finally {
+                        window.deferredPrompt = null;
+                        window.location.href = '/branch.html';
+                    }
+                } else {
+                    window.location.href = '/branch.html';
+                }
+            }, 600);
+        }
+    });
+
+    // Update manifest to branch-specific on load
+    (function(){
+        var params = new URLSearchParams(window.location.search);
+        var branch = params.get('branch');
+        if (branch) {
+            var link = document.getElementById('pwa-manifest');
+            if (link) link.href = '/manifest.json?branch=' + encodeURIComponent(branch);
+        }
+    })();
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css?v=2" rel="stylesheet"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"
+        integrity="sha512-tS3S5qG0BlhnQROyJXvNjeEM4UpMXHrQfTGmbQ1gKmelCxlSEBUaxhRBj/EFTzpbP4RVSrpEikbmdJobCvhE3g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css"
+        integrity="sha512-sMXtMNL1zRzolHYKEujM2AqCLUR9F2C4/05cdbxjjLSRvMQIciEPCQZo++nk7go3BtSuK9kfa/s+a4f4i5pLkw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"
+        integrity="sha512-bPs7Ae6pVvhOSiIcyUClR7/q2OAsRiovw4vAkX+zJbw3ShAeeqezq50RIIcIURq7Oa20rW2n2q+fyXBNcU9lrw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        #preloader.hide {
+            opacity: 0;
+            visibility: hidden;
+        }
+        @keyframes spinSlow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-spin {
+            animation: spinSlow 2s linear infinite;
+        }
+    </style>
+</head>
+<body class="overflow-hidden">
+
+    <!-- PRELOADER -->
+    <div id="preloader" class="fixed inset-0 bg-white z-[99999] flex items-center justify-center transition-all duration-700">
+        <div class="relative flex items-center justify-center">
+            <div class="absolute w-56 h-56 border-4 border-[#F36E21] border-t-transparent rounded-full animate-spin"></div>
+            <img src="images/Ammas%20logo.svg" alt="Amma's Pastries" class="w-40 object-contain">
+        </div>
+    </div>
+
+    <!-- BRANCH SELECTOR (Visible if no ?branch query parameter is set) -->
+    <div id="selectorModal" class="hidden fixed inset-0 bg-black/75 z-[9999] flex items-center justify-center p-4 backdrop-blur-md">
+        <div class="glass-card max-w-md w-full p-8 rounded-2xl border border-white/20 text-center">
+            <img src="images/Ammas%20logo.svg" alt="Amma's Pastries" class="w-32 mx-auto mb-6">
+            <h2 class="literata text-2xl text-white font-bold mb-4">Select Display Store</h2>
+            <p class="text-white/70 text-sm mb-6">Choose the branch location this screen represents to load its playlist and order queue.</p>
+            <div id="branchButtons" class="grid grid-cols-1 gap-3 max-h-[300px] overflow-y-auto custom-scroll pr-2">
+                <!-- Dynamically loaded branches -->
+            </div>
+        </div>
+    </div>
+    <section class="relative h-[100dvh] w-full flex items-center justify-center overflow-hidden">
+        <div class="flex absolute top-0 left-0 z-20 w-full justify-between px-8 pt-8 md:px-16 md:pt-16 items-start">
+            <div class="fade-in-up flex items-center gap-4" style="animation-delay: 0.5s;">
+                <img id="displayLogo" src="images/Ammas%20logo.svg" alt="Amma's Pastries" class="lg:w-[112px] sm:w-[92px] w-[72px] object-contain transition-opacity duration-300">
+                <!-- Fullscreen Toggle Switch -->
+                <button id="fullscreenToggleBtn" onclick="toggleFullscreenManual()" class="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white flex items-center justify-center transition-all duration-300 shadow-md backdrop-blur-sm cursor-pointer" title="Toggle Fullscreen">
+                    <svg id="fullscreenIcon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4h4M20 8V4h-4M4 16v4h4M20 16v4h-4" />
+                    </svg>
+                </button>
+            </div>
+            <div>  
+                <!-- Mobile Menu Button -->
+                <button id="homeMenuBtn" onclick="homeToggleMenu()" class="lg:hidden text-3xl text-black fixed top-4 right-4 z-[60] w-10 h-10 rounded-xl bg-white/50 backdrop-blur-md hidden flex items-center justify-center">
+                    ☰
+                </button>
+
+                <!-- Overlay -->
+                <div id="homeMenuOverlay" onclick="homeCloseMenu()" class="hidden fixed inset-0 bg-black/50 z-40"></div>
+
+                <!-- Pick Your Order Card -->
+                <div id="homeMenuCard" class="fixed lg:static top-0 right-0 h-screen lg:h-auto w-[280px] lg:w-80 hidden transition-transform duration-300 z-50 lg:z-10 glass-card rounded-none lg:rounded-2xl p-6 fade-in-up">
+                    <h3 class="literata capitalize py-2 rounded-[15px] bg-white font-bold text-[#F36E21] lg:text-xl sm:text-lg text-base mb-4 text-center italic">
+                        Pick Your Order
+                    </h3>
+                    <div id="ordersContainer" class="space-y-2 lg:text-[17px] sm:text-[15px] text-[13px] max-h-[70vh] overflow-y-auto custom-scroll pr-1">
+                        <!-- Dynamically populated ready orders -->
+                        <div class="text-center text-white/50 py-4 text-xs">No ready orders</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Marquee Announcements -->
+        <div id="announcementMarqueeBanner" class="absolute bottom-20 rotate-[358deg] w-full banner-gradient py-4 z-20 overflow-hidden transition-all duration-300">
+            <div id="marqueeContainer" class="animate-marquee whitespace-nowrap xl:text-[40px] lg:text-[35px] sm:text-[30px] text-[20px] text-white font-bold tracking-[0%] uppercase flex items-center">
+                <div class="flex items-center space-x-12 min-w-[100vw] pr-12" id="marquee-part-1">
+                    <span>Amma's Pastries</span>
+                    <span>*</span>
+                </div>
+                <div class="flex items-center space-x-12 min-w-[100vw] pr-12" id="marquee-part-2">
+                    <span>Amma's Pastries</span>
+                    <span>*</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Background Slider Carousel -->
+        <div class="owl-carousel home-carousel text-white h-[100dvh]">
+            <div class="w-full h-[100dvh]">
+                <img src="images/banner.jpg" class="w-full h-full object-cover">
+            </div>
+        </div>
+    </section>
+    
+    <script>
+        const API_BASE = window.__API_BASE__ || (
+            (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port === '3000'
+                ? ''
+                : (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:' || !window.location.hostname
+                    ? 'http://localhost:3000'
+                    : 'https://xd2g0dj86k.execute-api.ap-south-1.amazonaws.com')
+        );
+
+        // Redirect logged-in admin users away from the TV selector to the admin panel
+        (function() {
+            const token = localStorage.getItem('adminToken');
+            const role = localStorage.getItem('userRole');
+            const pathname = window.location.pathname;
+            const params = new URLSearchParams(window.location.search);
+            const branch = params.get('branch') || window._presetBranch;
+            const isPreview = params.get('preview') === 'true';
+            
+            // Only redirect if they are admin, not viewing a specific branch TV signboard, and not explicitly previewing
+            if (token && role === 'admin' && !branch && !isPreview) {
+                // If they are on any root landing page, redirect to branch.html
+                if (pathname === '/' || pathname === '/index.html' || pathname === '/ammas-pastries' || pathname === '/ammas-pastries/') {
+                    window.location.replace('/branch.html');
+                }
+            }
+        })();
+
+        // Redirect standalone PWA/TWA app users directly to their dashboard or login screen
+        (function() {
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                                 window.matchMedia('(display-mode: fullscreen)').matches || 
+                                 window.navigator.standalone === true;
+            
+            const pathname = window.location.pathname;
+            const params = new URLSearchParams(window.location.search);
+            const branch = params.get('branch') || window._presetBranch;
+            const isPreview = params.get('preview') === 'true';
+            const isTvPath = pathname.startsWith('/ammas-pastries/');
+
+            if (isStandalone && !branch && !isPreview && !isTvPath) {
+                const token = localStorage.getItem('adminToken');
+                const role = localStorage.getItem('userRole');
+                const storedBranch = localStorage.getItem('userBranch');
+                
+                if (token) {
+                    if (role === 'admin') {
+                        window.location.replace('/branch.html');
+                    } else if (role === 'branch' && storedBranch) {
+                        const slug = storedBranch.toLowerCase().trim().replace(/\s+/g, '-');
+                        window.location.replace('/' + slug);
+                    } else {
+                        window.location.replace('/login');
+                    }
+                } else {
+                    window.location.replace('/login');
+                }
+            }
+        })();
+
+        // --- CLIENT-SIDE ROUTING GUARD FOR AWS AMPLIFY ---
+        // If Amplify rewrites a clean path (like /portal/* or /:slug) to index.html,
+        // redirect to the correct HTML file so the page loads and cleans up properly.
+        (function() {
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in' || window.location.hostname.endsWith('amplifyapp.com');
+            if (!isCleanActive) return;
+
+            const pathname = window.location.pathname;
+            
+            // 1. Detect if this is a Portal request: /portal/branch-slug
+            if (pathname.startsWith('/portal/') || pathname === '/portal') {
+                const parts = pathname.split('/').filter(Boolean);
+                const slug = parts[1]; // parts: ['portal', 'kalyan-nagar']
+                if (slug) {
+                    window.location.replace('/portal.html?branch=' + encodeURIComponent(slug));
+                } else {
+                    window.location.replace('/portal.html');
+                }
+                return;
+            }
+
+             // Detect if this is a clean Media request: /media/branch-slug
+            if (pathname.startsWith('/media/') || pathname === '/media') {
+                const parts = pathname.split('/').filter(Boolean);
+                const slug = parts[1];
+                if (slug) {
+                    window.location.replace('/' + slug);
+                } else {
+                    window.location.replace('/media.html');
+                }
+                return;
+            }
+
+            // Detect if this is a clean Orders request: /orders/branch-slug
+            if (pathname.startsWith('/orders/') || pathname === '/orders') {
+                const parts = pathname.split('/').filter(Boolean);
+                const slug = parts[1];
+                if (slug) {
+                    window.location.replace('/orders.html?branch=' + encodeURIComponent(slug));
+                } else {
+                    window.location.replace('/orders.html');
+                }
+                return;
+            }
+
+            // Detect if this is a clean Announcements request: /announcements/branch-slug
+            if (pathname.startsWith('/announcements/') || pathname === '/announcements') {
+                const parts = pathname.split('/').filter(Boolean);
+                const slug = parts[1];
+                if (slug) {
+                    window.location.replace('/announcements.html?branch=' + encodeURIComponent(slug));
+                } else {
+                    window.location.replace('/announcements.html');
+                }
+                return;
+            }
+
+            // 2. Detect if this is a clean Details request: /admin/branch-slug
+            const namedRoutes = ['login', 'branch', 'portal', 'details', 'announcements', 'orders', 'image', 'video', 'apk', 'header', 'index1', 'ammas-pastries', 'media', 'admin'];
+            const parts = pathname.split('/').filter(Boolean);
+            if (parts.length === 2 && parts[0] === 'admin') {
+                window.location.replace('/details.html?branch=' + encodeURIComponent(parts[1]));
+                return;
+            }
+            // Detect if this is a clean Media request: /branch-slug
+            if (parts.length === 1 && !namedRoutes.includes(parts[0]) && !parts[0].includes('.')) {
+                window.location.replace('/media.html?branch=' + encodeURIComponent(parts[0]));
+                return;
+            }
+        })();
+
+        // --- CLEAN URL REWRITING ---
+        (function() {
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in' || window.location.hostname.endsWith('amplifyapp.com');
+            if (!isCleanActive) return;
+            const pathname = window.location.pathname;
+            const params = new URLSearchParams(window.location.search);
+            const branch = params.get('branch');
+            if (branch) {
+                // Display sign: /index.html?branch=Kalyan Nagar → /ammas-pastries/kalyan-nagar
+                const slug = branch.toLowerCase().trim().replace(/\s+/g, '-');
+                history.replaceState(null, '', '/ammas-pastries/' + slug);
+            } else if (pathname === '/index.html' || pathname === '/') {
+                // Plain index → /ammas-pastries
+                history.replaceState(null, '', '/ammas-pastries');
+            }
+        })();
+
+
+        // Helper: Get branch from query param or /ammas-pastries/:slug path
+        function getBranchParam() {
+            const params = new URLSearchParams(window.location.search);
+            const queryBranch = params.get('branch');
+            if (queryBranch) return queryBranch;
+
+            // Support pre-injected branch name (used by downloaded standalone HTML files)
+            if (window._presetBranch) return window._presetBranch;
+
+            // On local/Amplify, the path may be /ammas-pastries/:slug
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in' || window.location.hostname.endsWith('amplifyapp.com');
+            const pathname = window.location.pathname;
+            if (isCleanActive && pathname.startsWith('/ammas-pastries/')) {
+                const slug = pathname.replace('/ammas-pastries/', '');
+                if (slug) {
+                    // Try to match stored branch name
+                    const stored = localStorage.getItem('userBranch') || '';
+                    if (stored && stored.toLowerCase().replace(/\s+/g, '-') === slug.toLowerCase()) {
+                        return stored;
+                    }
+                    return slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+                }
+            }
+            return null;
+        }
+
+
+
+
+        // Preloader Closer
+        window.addEventListener("load", () => {
+            setTimeout(() => {
+                const preloader = document.getElementById("preloader");
+                if (preloader) {
+                    preloader.classList.add("hide");
+                    setTimeout(() => preloader.remove(), 700);
+                }
+            }, 500);
+        });
+
+        // Toggle Menu
+        const homeMenuCard = document.getElementById('homeMenuCard');
+        const homeMenuOverlay = document.getElementById('homeMenuOverlay');
+
+        function homeToggleMenu() {
+            homeMenuCard.classList.toggle('hidden');
+            homeMenuOverlay.classList.toggle('hidden');
+        }
+
+        function homeCloseMenu() {
+            homeMenuCard.classList.add('hidden');
+            homeMenuOverlay.classList.add('hidden');
+        }
+
+        // --- CLIENT REAL-TIME INTEGRATION ---
+        let owl = $('.home-carousel');
+        let currentMediaHash = '';
+        let currentOrdersHash = '';
+        let currentAnnouncementsHash = '';
+        window.tokensEnabled = true;
+        window.activeOrdersCount = 0;
+
+        function updateCardVisibility() {
+            const homeMenuCard = document.getElementById('homeMenuCard');
+            const homeMenuBtn = document.getElementById('homeMenuBtn');
+            if (!homeMenuCard) return;
+            const isEnabled = (window.tokensEnabled !== false);
+            const hasOrders = ((window.activeOrdersCount || 0) > 0);
+            if (isEnabled && hasOrders) {
+                homeMenuCard.classList.remove('hidden');
+                homeMenuCard.classList.add('lg:block');
+                if (homeMenuBtn) homeMenuBtn.classList.remove('hidden');
+            } else {
+                homeMenuCard.classList.add('hidden');
+                homeMenuCard.classList.remove('lg:block');
+                if (homeMenuBtn) homeMenuBtn.classList.add('hidden');
+                const homeMenuOverlay = document.getElementById('homeMenuOverlay');
+                if (homeMenuOverlay) homeMenuOverlay.classList.add('hidden');
+            }
+        }
+
+        function initApp() {
+            const branch = getBranchParam();
+            if (!branch) {
+                showBranchSelector();
+                return;
+            }
+
+            // Start heartbeat
+            sendHeartbeat();
+            setInterval(sendHeartbeat, 5000);
+
+            // Fetch initial display sign components
+            fetchDisplayData();
+            // Poll for dynamic updates every 5 seconds
+            setInterval(fetchDisplayData, 5000);
+        }
+
+        // Load branches if not specified in URL
+        function showBranchSelector() {
+            const modal = document.getElementById('selectorModal');
+            modal.classList.remove('hidden');
+
+            fetch(API_BASE + '/api/branches')
+                .then(res => res.json())
+                .then(branches => {
+                    const btnContainer = document.getElementById('branchButtons');
+                    btnContainer.innerHTML = '';
+                    branches.forEach(b => {
+                        const btn = document.createElement('button');
+                        btn.className = 'w-full py-3 px-4 bg-white/10 hover:bg-[#F36E21] text-white rounded-xl transition-all duration-300 font-medium tracking-wide text-center text-sm border border-white/10 hover:border-white/20';
+                        btn.innerText = b.name;
+                        btn.onclick = () => {
+                            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                            const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in' || window.location.hostname.endsWith('amplifyapp.com');
+                            if (isCleanActive) {
+                                const slug = b.name.toLowerCase().trim().replace(/\s+/g, '-');
+                                window.location.href = '/ammas-pastries/' + slug;
+                            } else {
+                                window.location.search = `?branch=${encodeURIComponent(b.name)}`;
+                            }
+                        };
+
+                        btnContainer.appendChild(btn);
+                    });
+                })
+                .catch(err => console.error("Error fetching selector branches:", err));
+        }
+
+        // Periodic Ping to let admin know TV display is online
+        function sendHeartbeat() {
+            const branch = getBranchParam();
+            if (!branch) return;
+            fetch(`${API_BASE}/api/branches/${encodeURIComponent(branch)}/heartbeat`, { method: 'POST' })
+                .catch(err => console.error("Heartbeat fail:", err));
+        }
+
+        function fetchDisplayData() {
+            const branch = getBranchParam();
+            if (!branch) return;
+
+            // Fetch all display data in a single consolidated API call
+            fetch(`${API_BASE}/api/branches/${encodeURIComponent(branch)}/display-data?_t=${Date.now()}`)
+                .then(res => res.json())
+                .then(data => {
+                    const { media, orders, announcements, branchInfo } = data;
+
+                    // 1. Process Logo Setting
+                    if (media) {
+                        const logoItem = media.find(m => m.id === 'logo');
+                        const displayLogo = document.getElementById('displayLogo');
+                        if (displayLogo) {
+                            if (logoItem && !logoItem.active) {
+                                displayLogo.classList.add('opacity-0', 'pointer-events-none');
+                            } else {
+                                displayLogo.classList.remove('opacity-0', 'pointer-events-none');
+                            }
+                        }
+                        updateMediaCarousel(media);
+                    }
+
+                    // 2. Process Orders List
+                    if (orders) {
+                        updateOrdersList(orders);
+                    }
+
+                    // 3. Process Announcements
+                    if (announcements) {
+                        updateAnnouncements(announcements);
+                    }
+
+                    // 4. Process Branch Info (tokensEnabled status)
+                    window.tokensEnabled = branchInfo ? branchInfo.tokensEnabled !== false : true;
+                    updateCardVisibility();
+                })
+                .catch(err => console.error("Error loading display data:", err));
+        }
+
+        // --- INDEXEDDB MEDIA CACHE FOR BANDWIDTH SAVING ---
+        const DB_NAME = 'AmmasMediaCache';
+        const STORE_NAME = 'media';
+        let db = null;
+        let localUrls = {};
+
+        function initDB() {
+            return new Promise((resolve, reject) => {
+                if (db) { resolve(db); return; }
+                const request = indexedDB.open(DB_NAME, 1);
+                request.onupgradeneeded = (e) => {
+                    const database = e.target.result;
+                    if (!database.objectStoreNames.contains(STORE_NAME)) {
+                        database.createObjectStore(STORE_NAME, { keyPath: 'url' });
+                    }
+                };
+                request.onsuccess = (e) => {
+                    db = e.target.result;
+                    resolve(db);
+                };
+                request.onerror = (e) => {
+                    reject(e.target.error);
+                };
+            });
+        }
+
+        function getCachedMedia(url) {
+            return new Promise((resolve) => {
+                if (!db) { resolve(null); return; }
+                const transaction = db.transaction(STORE_NAME, 'readonly');
+                const store = transaction.objectStore(STORE_NAME);
+                const request = store.get(url);
+                request.onsuccess = () => {
+                    if (request.result) {
+                        resolve(URL.createObjectURL(request.result.blob));
+                    } else {
+                        resolve(null);
+                    }
+                };
+                request.onerror = () => {
+                    resolve(null);
+                };
+            });
+        }
+
+        function cacheMedia(url, blob) {
+            return new Promise((resolve) => {
+                if (!db) { resolve(); return; }
+                const transaction = db.transaction(STORE_NAME, 'readwrite');
+                const store = transaction.objectStore(STORE_NAME);
+                store.put({ url, blob });
+                transaction.oncomplete = () => resolve();
+                transaction.onerror = () => resolve();
+            });
+        }
+
+        async function resolveMediaUrl(url) {
+            try {
+                const cachedUrl = await getCachedMedia(url);
+                if (cachedUrl) {
+                    return cachedUrl;
+                }
+                const res = await fetch(url);
+                if (!res.ok) throw new Error("Fetch failed");
+                const blob = await res.blob();
+                await cacheMedia(url, blob);
+                return URL.createObjectURL(blob);
+            } catch (err) {
+                console.error("Failed to fetch/cache media:", url, err);
+                return url;
+            }
+        }
+
+        function cleanCache(keepUrls) {
+            if (!db) return;
+            const transaction = db.transaction(STORE_NAME, 'readwrite');
+            const store = transaction.objectStore(STORE_NAME);
+            const request = store.getAllKeys();
+            request.onsuccess = () => {
+                const keys = request.result;
+                keys.forEach(key => {
+                    if (!keepUrls.includes(key)) {
+                        store.delete(key);
+                        console.log("Cleaned stale cache item:", key);
+                    }
+                });
+            };
+        }
+
+        // Render Active Media in Slider
+        async function updateMediaCarousel(mediaList) {
+            const activeMedia = mediaList.filter(m => m.active && m.id !== 'logo');
+            const mediaHash = activeMedia.map(m => m.id + '|' + m.url).join(',');
+            
+            if (mediaHash === currentMediaHash) return; // No change, keep playing
+            currentMediaHash = mediaHash;
+
+            // Revoke old blob URLs to prevent memory leaks
+            Object.values(localUrls).forEach(url => URL.revokeObjectURL(url));
+            localUrls = {};
+
+            // Initialize cache database
+            if (!db) {
+                try {
+                    await initDB();
+                } catch (err) {
+                    console.error("Failed to initialize IndexedDB cache:", err);
+                }
+            }
+
+            // Cleanup stale items from cache
+            const keepUrls = activeMedia.map(m => m.url);
+            cleanCache(keepUrls);
+
+            // Fetch and resolve URLs locally
+            const resolvedItems = await Promise.all(activeMedia.map(async item => {
+                const localUrl = await resolveMediaUrl(item.url);
+                localUrls[item.url] = localUrl;
+                return { ...item, localUrl };
+            }));
+
+            if (owl.data('owl.carousel')) {
+                owl.owlCarousel('destroy');
+            }
+            owl.empty();
+
+            if (resolvedItems.length === 0) {
+                // Fallback to default
+                owl.append(`
+                    <div class="w-full h-[100dvh]">
+                        <img src="images/banner.jpg" class="w-full h-full object-cover">
+                    </div>
+                `);
+            } else {
+                resolvedItems.forEach(item => {
+                    if (item.type === 'video') {
+                        owl.append(`
+                            <div class="w-full h-[100dvh]">
+                                <video class="slide-video w-full h-full object-cover" muted playsinline preload="auto">
+                                    <source src="${item.localUrl}" type="video/mp4">
+                                </video>
+                            </div>
+                        `);
+                    } else {
+                        owl.append(`
+                            <div class="w-full h-[100dvh]">
+                                <img src="${item.localUrl}" class="w-full h-full object-cover">
+                            </div>
+                        `);
+                    }
+                });
+            }
+
+            // Re-initialize Owl Carousel
+            owl.owlCarousel({
+                items: 1,
+                loop: true,
+                nav: false,
+                dots: false,
+                autoplay: true,
+                autoplayTimeout: 5000,
+                autoplayHoverPause: false,
+                smartSpeed: 1500
+            });
+
+            // Set up video playback check
+            setupVideoControls();
+            
+            setTimeout(() => {
+                owl.trigger('translated.owl.carousel');
+            }, 500);
+        }
+
+        function setupVideoControls() {
+            owl.off('translated.owl.carousel');
+            owl.on('translated.owl.carousel', function(event) {
+                $('.slide-video').each(function () {
+                    this.pause();
+                    this.currentTime = 0;
+                });
+
+                const currentItem = owl.find('.owl-item.active');
+                const video = currentItem.find('video').get(0);
+
+                if (video) {
+                    owl.trigger('stop.owl.autoplay');
+                    video.currentTime = 0;
+                    video.onended = null;
+                    video.onended = function () {
+                        owl.trigger('next.owl.carousel');
+                        owl.trigger('play.owl.autoplay', [5000]);
+                    };
+                    
+                    const playPromise = video.play();
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => {
+                            console.error("Auto-playback failed or was blocked:", error);
+                            setTimeout(() => {
+                                owl.trigger('next.owl.carousel');
+                                owl.trigger('play.owl.autoplay', [5000]);
+                            }, 5000);
+                        });
+                    }
+                } else {
+                    owl.trigger('play.owl.autoplay', [5000]);
+                }
+            });
+        }
+
+        // Render Ready Orders (Token ID only)
+        function updateOrdersList(orders) {
+            const now = Date.now();
+            const threeMinutesLimit = 3 * 60 * 1000; // 3 minutes in milliseconds
+
+            const activeOrders = orders.filter(o => {
+                const timestampStr = o.id.startsWith('o-') ? o.id.substring(2) : null;
+                const createdAt = o.createdAt || (timestampStr ? parseInt(timestampStr, 10) : null);
+                if (!createdAt) return true;
+                return (now - createdAt) < threeMinutesLimit;
+            });
+
+            window.activeOrdersCount = activeOrders.length;
+            updateCardVisibility();
+
+            const ordersHash = activeOrders.map(o => o.id + '|' + o.token).join(',');
+            if (ordersHash === currentOrdersHash) return;
+            currentOrdersHash = ordersHash;
+
+            const container = document.getElementById('ordersContainer');
+            container.innerHTML = '';
+
+            if (activeOrders.length === 0) {
+                return;
+            }
+
+            // Optimize layout: if there are many tokens, display in two columns and resize
+            if (activeOrders.length > 8) {
+                container.className = 'grid grid-cols-2 gap-2 max-h-[70vh] overflow-y-auto custom-scroll pr-1';
+            } else {
+                container.className = 'space-y-2 lg:text-[17px] sm:text-[15px] text-[13px] max-h-[70vh] overflow-y-auto custom-scroll pr-1';
+            }
+
+            activeOrders.forEach(o => {
+                const card = document.createElement('div');
+                if (activeOrders.length > 8) {
+                    card.className = 'w-full py-2 px-3 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-xl transition-all duration-300 font-black flex justify-center items-center shadow-md animate-in fade-in slide-in-from-top-1';
+                    card.innerHTML = `
+                        <span class="text-sm lg:text-base font-black text-[#F36E21] bg-white px-3 py-1.5 rounded-lg shadow-sm tracking-wider w-full text-center truncate">#${o.token}</span>
+                    `;
+                } else {
+                    card.className = 'w-full py-4 px-6 bg-white/10 backdrop-blur-md border border-white/20 text-white rounded-2xl transition-all duration-300 font-black tracking-wide flex justify-center items-center shadow-lg animate-in fade-in slide-in-from-top-1';
+                    card.innerHTML = `
+                        <span class="text-lg lg:text-xl font-extrabold text-[#F36E21] bg-white px-5 py-2 rounded-xl shadow-md tracking-wider">#${o.token}</span>
+                    `;
+                }
+                container.appendChild(card);
+            });
+        }
+
+        // Render Announcements in Marquee
+        function updateAnnouncements(anns) {
+            const bannerSettings = anns.find(a => a.id === 'banner-settings');
+            const bannerActive = bannerSettings ? bannerSettings.active : true;
+            const marqueeBanner = document.getElementById('announcementMarqueeBanner');
+            if (marqueeBanner) {
+                if (!bannerActive) {
+                    marqueeBanner.classList.add('opacity-0', 'pointer-events-none');
+                } else {
+                    marqueeBanner.classList.remove('opacity-0', 'pointer-events-none');
+                }
+            }
+
+            const activeAnns = anns.filter(a => a.active && a.id !== 'banner-settings');
+            const annsHash = activeAnns.map(a => a.id + '|' + a.text).join(',');
+            if (annsHash === currentAnnouncementsHash) return;
+            currentAnnouncementsHash = annsHash;
+
+            const part1 = document.getElementById('marquee-part-1');
+            const part2 = document.getElementById('marquee-part-2');
+
+            let contentHtml = '';
+            if (activeAnns.length === 0) {
+                contentHtml = `
+                    <span>Amma's Pastries</span>
+                    <span>*</span>
+                    <span>Luxury Bakery Experience</span>
+                    <span>*</span>
+                `;
+            } else {
+                activeAnns.forEach(a => {
+                    contentHtml += `
+                        <span>${a.text}</span>
+                        <span>*</span>
+                    `;
+                });
+            }
+
+            part1.innerHTML = contentHtml;
+            part2.innerHTML = contentHtml;
+        }
+
+        // Initialize display app
+        $(document).ready(() => {
+            initApp();
+        });
+
+        // Cross-browser Fullscreen Helpers
+        function isFullscreenEnabled() {
+            return !!(document.fullscreenElement || 
+                      document.webkitFullscreenElement || 
+                      document.mozFullScreenElement || 
+                      document.msFullscreenElement);
+        }
+
+        function requestFullscreenHelper(el) {
+            if (el.requestFullscreen) {
+                return el.requestFullscreen();
+            } else if (el.webkitRequestFullscreen) {
+                return Promise.resolve(el.webkitRequestFullscreen());
+            } else if (el.mozRequestFullScreen) {
+                return Promise.resolve(el.mozRequestFullScreen());
+            } else if (el.msRequestFullscreen) {
+                return Promise.resolve(el.msRequestFullscreen());
+            }
+            return Promise.reject("Fullscreen API not supported");
+        }
+
+        function exitFullscreenHelper() {
+            if (document.exitFullscreen) {
+                return document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                return Promise.resolve(document.webkitExitFullscreen());
+            } else if (document.mozCancelFullScreen) {
+                return Promise.resolve(document.mozCancelFullScreen());
+            } else if (document.msExitFullscreen) {
+                return Promise.resolve(document.msExitFullscreen());
+            }
+            return Promise.reject("Exit fullscreen not supported");
+        }
+
+        // Fullscreen activation
+        function attemptFullscreen() {
+            const docEl = document.documentElement;
+            if (!isFullscreenEnabled()) {
+                requestFullscreenHelper(docEl).catch(err => {
+                    console.log("Programmatic fullscreen request blocked. Waiting for user interaction.");
+                });
+            }
+        }
+
+        // Manual fullscreen button switch
+        function toggleFullscreenManual() {
+            const docEl = document.documentElement;
+            if (!isFullscreenEnabled()) {
+                requestFullscreenHelper(docEl).then(() => {
+                    updateFullscreenIcon(true);
+                }).catch(err => {
+                    console.error("Fullscreen error:", err);
+                });
+            } else {
+                exitFullscreenHelper().then(() => {
+                    updateFullscreenIcon(false);
+                }).catch(err => {
+                    console.error("Exit fullscreen error:", err);
+                });
+            }
+        }
+
+        function updateFullscreenIcon(isFullscreen) {
+            const btn = document.getElementById('fullscreenToggleBtn');
+            if (btn) {
+                if (isFullscreen) {
+                    btn.classList.add('hidden');
+                } else {
+                    btn.classList.remove('hidden');
+                }
+            }
+            const icon = document.getElementById('fullscreenIcon');
+            if (!icon) return;
+            if (isFullscreen) {
+                // Exit fullscreen icon (arrows pointing inwards)
+                icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" />`;
+            } else {
+                // Enter fullscreen icon (arrows pointing outwards)
+                icon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4h4M20 8V4h-4M4 16v4h4M20 16v4h-4" />`;
+            }
+        }
+
+        // Listen for fullscreen change events to sync the icon state
+        const fullscreenEvents = ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'];
+        fullscreenEvents.forEach(evt => {
+            document.addEventListener(evt, () => {
+                updateFullscreenIcon(isFullscreenEnabled());
+            });
+        });
+
+        // Try immediately on load (some browsers allow it in kiosk mode or policy config)
+        window.addEventListener('load', () => {
+            attemptFullscreen();
+            updateFullscreenIcon(isFullscreenEnabled());
+        });
+
+        // Trigger fullscreen on user interactions (click, touch/tap, keydown)
+        const activationEvents = ['click', 'touchstart', 'keydown'];
+        const runActivation = (e) => {
+            if (e.target && typeof e.target.closest === 'function') {
+                const btn = e.target.closest('button');
+                if (btn && btn.id === 'fullscreenToggleBtn') {
+                    return;
+                }
+            }
+            attemptFullscreen();
+        };
+        activationEvents.forEach(evt => {
+            document.addEventListener(evt, runActivation);
+        });
+
+        // Auto-prompt PWA install when opened via the Download button (?install=1)
+        let _installPrompt = null;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            _installPrompt = e;
+            if (new URLSearchParams(window.location.search).get('install') === '1') {
+                setTimeout(() => {
+                    if (_installPrompt) {
+                        _installPrompt.prompt();
+                        _installPrompt.userChoice.then(() => { _installPrompt = null; });
+                    }
+                }, 1500);
+            }
+        });
+    </script>
+    <script src="install-banner.js"></script>
+</body>
+</html>

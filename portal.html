@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+    (function() {
+        const pathParts = window.location.pathname.split('/').filter(Boolean);
+        const params = new URLSearchParams(window.location.search);
+        const hasBranch = params.has('branch') || (pathParts.length === 2 && pathParts[0] === 'portal');
+        if (!hasBranch) {
+            if (!localStorage.getItem('adminToken') || localStorage.getItem('userRole') !== 'admin') {
+                window.location.replace('/login');
+            }
+        }
+    })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <base href="/">
+    <title>Amma's Pastries | Branch Portal</title>
+    <link rel="manifest" href="/manifest.json">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css?v=2" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,200..900;1,7..72,200..900&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #F8F9FA;
+        }
+        .literata {
+            font-family: 'Literata', serif;
+        }
+        .portal-card {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .portal-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px -15px rgba(243, 110, 33, 0.15);
+            border-color: #F36E21;
+        }
+        .portal-btn {
+            background: linear-gradient(90deg, rgba(243,110,33,1) 0%, rgba(211,84,10,1) 100%);
+        }
+        .portal-btn:hover {
+            background: linear-gradient(90deg, rgba(211,84,10,1) 0%, rgba(180,68,5,1) 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4 md:p-8 bg-[#FAF8F6]">
+
+    <!-- Logo & Header -->
+    <div class="mb-10 text-center flex flex-col items-center">
+        <img src="images/Ammas%20logo.svg" alt="Amma's Pastries" class="w-28 md:w-36 object-contain mb-6 drop-shadow-sm">
+        <h1 id="portal-title" class="literata text-3xl md:text-4xl lg:text-5xl font-black text-black leading-tight">Branch Portal</h1>
+        <p id="portal-subtitle" class="text-sm md:text-base text-gray-500 uppercase tracking-widest font-semibold mt-2">Loading branch info...</p>
+    </div>
+
+    <!-- Selection Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 w-full max-w-4xl px-4">
+        
+        <!-- Option 1: TV Display Signage -->
+        <div onclick="openPreview()" class="portal-card bg-white border border-gray-100 p-8 rounded-3xl cursor-pointer flex flex-col justify-between h-72 md:h-80 shadow-sm relative overflow-hidden group">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-[#F36E21]/5 rounded-bl-[100px] transition-all duration-500 group-hover:scale-125"></div>
+            <div>
+                <div class="w-14 h-14 rounded-2xl bg-[#F36E21]/10 flex items-center justify-center text-[#F36E21] mb-6">
+                    <i class="fa-solid fa-desktop text-2xl"></i>
+                </div>
+                <h2 class="literata text-2xl font-black text-black mb-3">Preview</h2>
+                <p class="text-gray-500 text-sm md:text-base leading-relaxed">Preview TV Display</p>
+            </div>
+            <button class="portal-btn text-white font-bold py-3 px-6 rounded-2xl text-sm uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 mt-4 shadow-sm self-start">
+                Open Preview <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+            </button>
+        </div>
+
+        <!-- Option 2: Manager Dashboard -->
+        <div onclick="openDashboard()" class="portal-card bg-white border border-gray-100 p-8 rounded-3xl cursor-pointer flex flex-col justify-between h-72 md:h-80 shadow-sm relative overflow-hidden group">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-[#D3540A]/5 rounded-bl-[100px] transition-all duration-500 group-hover:scale-125"></div>
+            <div>
+                <div class="w-14 h-14 rounded-2xl bg-[#D3540A]/10 flex items-center justify-center text-[#D3540A] mb-6">
+                    <i class="fa-solid fa-chart-line text-2xl"></i>
+                </div>
+                <h2 class="literata text-2xl font-black text-black mb-3">Manager Dashboard</h2>
+                <p class="text-gray-500 text-sm md:text-base leading-relaxed">Configure media uploads, Logo , Announcement , and manage order tokens.</p>
+            </div>
+            <button class="portal-btn text-white font-bold py-3 px-6 rounded-2xl text-sm uppercase tracking-wider transition-all duration-300 flex items-center justify-center gap-2 mt-4 shadow-sm self-start">
+                Open Dashboard <i class="fa-solid fa-chevron-right text-xs"></i>
+            </button>
+        </div>
+
+    </div>
+
+
+
+    <script src="script.js?v=3"></script>
+    <script>
+        // Read branch from path: /portal/kalyan-nagar → "Kalyan Nagar"
+        // Falls back to ?branch= query param, then localStorage
+        function getBranchFromPortalPath() {
+            const pathParts = window.location.pathname.split('/');
+            // pathParts: ['', 'portal', 'kalyan-nagar']
+            const slug = pathParts[2];
+            if (slug) {
+                // Convert slug back to display name via localStorage or by capitalizing
+                const stored = localStorage.getItem('userBranch') || '';
+                if (stored && stored.toLowerCase().replace(/\s+/g, '-') === slug.toLowerCase()) {
+                    return stored;
+                }
+                // Capitalize each word from slug
+                return slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+            }
+            // No slug in URL — check if admin (generic portal) or staff (fall back to stored branch)
+            const role = localStorage.getItem('userRole');
+            if (role === 'admin') return null; // Admin-only portal, no specific branch
+            const params = new URLSearchParams(window.location.search);
+            return params.get('branch') || localStorage.getItem('userBranch') || '';
+        }
+
+        const branch = getBranchFromPortalPath();
+        const isAdminPortal = !branch && localStorage.getItem('userRole') === 'admin';
+
+        // Rewrite URL to clean /portal/branch-slug format ONLY when a branch is present
+        (function() {
+            if (isAdminPortal) return; // stay at /portal for admin generic view
+            if (!branch) return;
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in' || window.location.hostname.endsWith('amplifyapp.com');
+            if (!isCleanActive) return;
+            const slug = branch.toLowerCase().trim().replace(/\s+/g, '-');
+            const expectedPath = '/portal/' + slug;
+            if (window.location.pathname !== expectedPath) {
+                history.replaceState(null, '', expectedPath);
+            }
+        })();
+
+        // Update branch labels
+        if (isAdminPortal) {
+            document.getElementById('portal-subtitle').innerText = 'Admin Portal';
+            document.getElementById('portal-title').innerText = 'Select Application';
+        } else {
+            document.getElementById('portal-subtitle').innerText = (branch || '') + ' Branch Portal';
+            document.getElementById('portal-title').innerText = 'Select Application';
+        }
+
+        // Show back to branch list button for admins
+        if (localStorage.getItem('userRole') === 'admin') {
+            const backBtn = document.getElementById('backRegistryBtn');
+            if (backBtn) backBtn.classList.remove('hidden');
+        }
+
+        function openPreview() {
+            if (!branch) { window.open('/ammas-pastries?preview=true', '_blank'); return; }
+            const slug = branch.toLowerCase().trim().replace(/\s+/g, '-');
+            window.open('/ammas-pastries/' + slug + '?preview=true', '_blank');
+        }
+
+        function openDashboard() {
+            if (!branch) { _navigate('branch.html'); return; }
+            const slug = branch.toLowerCase().trim().replace(/\s+/g, '-');
+            window.location.href = '/' + slug;
+        }
+
+        function goBackRegistry() {
+            _navigate('branch.html');
+        }
+
+        function logoutPortal() {
+            handleLogout();
+        }
+    </script>
+    <script src="install-banner.js"></script>
+</body>
+</html>

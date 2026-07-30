@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amma's Pastries | Luxury Bakery</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css" rel="stylesheet" />
+</head>
+
+<body class="flex h-screen overflow-hidden">
+    <div class="header"></div>
+    <main class="flex-1 flex flex-col min-w-0">
+        <div class="p-4 md:p-8 lg:p-10 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSidebar()"
+                    class="lg:hidden w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <h1 class="literata text-[25px] md:text-[30px] lg:text-[35px] ">Announcements</h1>
+            </div>
+
+            <button
+                class="flex items-center gap-2 border border-[#CCCCCC] px-4 md:px-5 py-2 lg:rounded-[10px] sm:rounded-[8px] rounded-[6px] lg:text-[17px] sm:text-[15px] text-[13px] font-medium hover:text-white hover-gradient">
+                <i class="fa-solid fa-volume-high"></i>
+                <span class="uppercase  whitespace-nowrap">Add Announcements</span>
+            </button>
+        </div>
+        <div class="flex-1 overflow-y-auto custom-scroll px-4 md:px-8 lg:px-10 pb-32">
+
+            <!-- FORM 1: Create New Announcement -->
+            <div class="mb-10">
+                <div class="bg-[#F3F3F3] rounded-sm w-full h-44 p-4 mb-4">
+                    <textarea id="announcementInput"
+                        class="w-full h-full bg-transparent border-none outline-none resize-none text-gray-700"
+                        placeholder="Enter Your Message"></textarea>
+                </div>
+
+                <div class="flex justify-end lg:mt-8 sm:mt-6 mt-4">
+                    <button onclick="submitNewAnnouncement()"
+                        class="flex-1 md:flex-none px-6 md:px-8 py-2 border border-[#F36E21] lg:rounded-[10px] sm:rounded-[8px] rounded-[6px] lg:text-[17px] sm:text-[15px] text-[13px] font-medium banner-gradient text-white">Submit</button>
+                </div>
+            </div>
+
+            <div class="my-5 "></div>
+
+            <!-- FORM 2: List of Items with Checkboxes -->
+            <div id="announcement-list" class="space-y-3 mb-6">
+
+                <!-- Row 1 -->
+                <label class="bg-[#f2f2f2] p-4 flex gap-4 rounded-sm cursor-pointer">
+                    <input type="checkbox" class="mt-[6px] announcements-checkbox" value="1" checked>
+                    <span class="text-black text-sm sm:text-base lg:text-lg font-medium">Whether it's a holiday sale for
+                        your business, a special family event, a holiday schedule change, or a pregnancy</span>
+                </label>
+
+                <!-- Row 2 -->
+                <label class="bg-[#f2f2f2] p-4 flex gap-4 rounded-sm cursor-pointer">
+                    <input type="checkbox" class="mt-[6px] announcements-checkbox" value="2" checked>
+                    <span class="text-black text-sm sm:text-base lg:text-lg font-medium">Whether it's a holiday sale for
+                        your business, a special family event, a holiday schedule change, or a pregnancy</span>
+                </label>
+
+                <!-- Row 3 -->
+                <label class="bg-[#f2f2f2] p-4 flex gap-4 rounded-sm cursor-pointer">
+                    <input type="checkbox" class="mt-[6px] announcements-checkbox" value="3" checked>
+                    <span class="text-black text-sm sm:text-base lg:text-lg font-medium">Whether it's a holiday sale for
+                        your business, a special family event, a holiday schedule change, or a pregnancy</span>
+                </label>
+
+                <!-- Row 4 -->
+                <label class="bg-[#f2f2f2] p-4 flex gap-4 rounded-sm cursor-pointer">
+                    <input type="checkbox" class="mt-[6px] announcements-checkbox" value="4" checked>
+                    <span class="text-black text-sm sm:text-base lg:text-lg font-medium">Whether it's a holiday sale for
+                        your business, a special family event, a holiday schedule change, or a pregnancy</span>
+                </label>
+
+                <!-- Row 5 -->
+                <label class="bg-[#f2f2f2] p-4 flex gap-4 rounded-sm cursor-pointer">
+                    <input type="checkbox" class="mt-[6px] announcements-checkbox" value="5" checked>
+                    <span class="text-black text-sm sm:text-base lg:text-lg font-medium">Whether it's a holiday sale for
+                        your business, a special family event, a holiday schedule change, or a pregnancy</span>
+                </label>
+
+            </div>
+
+            <!-- Bottom Submit Button for List -->
+            <div class="flex justify-end lg:mt-8 sm:mt-6 mt-4">
+                <!-- Onclick function for second form -->
+                <button onclick="updateAnnouncementList()"
+                    class="flex-1 md:flex-none px-6 md:px-8 py-2 border border-[#F36E21] lg:rounded-[10px] sm:rounded-[8px] rounded-[6px] lg:text-[17px] sm:text-[15px] text-[13px] font-medium banner-gradient text-white">Submit</button>
+            </div>
+        </div>
+
+
+    </main>
+    <script>
+        // Function for the FIRST submit button (Text Area)
+        function submitNewAnnouncement() {
+            const text = document.getElementById('announcementInput').value;
+            if (text.trim() === "") {
+                alert("Please enter a message before submitting.");
+                return;
+            }
+            console.log("Submitting New Message:", text);
+            alert("New Announcement Submitted!");
+            document.getElementById('announcementInput').value = ""; // Clear after submit
+        }
+
+        // Function for the SECOND submit button (Checkbox List)
+        function updateAnnouncementList() {
+            const checkboxes = document.querySelectorAll('.announcements-checkbox');
+            const selectedItems = [];
+
+            checkboxes.forEach((cb, index) => {
+                if (cb.checked) {
+                    selectedItems.push(index + 1); // Storing the row number or value
+                }
+            });
+
+            console.log("Selected Checkbox IDs:", selectedItems);
+            alert("Updated list with " + selectedItems.length + " active items.");
+        }
+
+    </script>
+    <script src="script.js"></script>
+</body>
+
+</html>

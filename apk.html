@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  if (!localStorage.getItem('adminToken')) {
+    window.location.href = 'login.html';
+  }
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Amma's Pastries | Luxury Bakery</title>
+<link rel="manifest" href="/manifest.json">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link rel="stylesheet" href="style.css" rel="stylesheet"/>
+</head>
+<body class="flex h-screen overflow-hidden">
+<div class="header"></div>
+
+<main class="flex-1 flex flex-col min-w-0">
+<div class="p-4 md:p-8 lg:p-10 flex flex-wrap items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<button onclick="toggleSidebar()" class="lg:hidden w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+<i class="fa-solid fa-bars"></i>
+</button>
+<h1 class="literata text-[25px] md:text-[30px] lg:text-[35px] ">Branches</h1>
+</div>
+
+<!-- <button onclick="openModal()" class="flex items-center gap-2 border border-[#CCCCCC] px-4 md:px-5 py-1 lg:rounded-[10px] sm:rounded-[8px] rounded-[6px] lg:text-[17px] sm:text-[15px] text-[13px] font-medium hover:text-white hover-gradient">
+<i class="fa-solid fa-cloud-arrow-up"></i>
+<span class="uppercase  whitespace-nowrap">Add Branch</span>
+</button> -->
+</div>
+<div class="flex-1 overflow-y-auto custom-scroll px-4 md:px-8 lg:px-10 pb-32">
+    <div class="">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-y-10 gap-x-4">
+            <div class="w-full bg-white shadow-[0_0_60px_0_rgba(0,0,0,6%)] rounded-[20px]">
+                <h6 class="w-full lg:text-2xl sm:text-xl text-lg font-medium literata text-[#D3540A] border-b border-[#E9E9E9] xl:px-6 px-4 py-2">Karnataka</h6>
+                <div class="w-full lg:text-lg sm:text-base text-sm text-black capitalize ">
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Kammanahlli</div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Indranagar </div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Kalyan Nagar</div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Jayanagar </div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Koramangala </div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Kammanahlli</div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Indranagar </div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Kalyan Nagar</div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Jayanagar </div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Koramangala </div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+             <div class="w-full bg-white shadow-[0_0_60px_0_rgba(0,0,0,6%)] rounded-[20px]">
+                <h6 class="w-full lg:text-2xl sm:text-xl text-lg font-medium literata text-[#D3540A] border-b border-[#E9E9E9] xl:px-6 px-4 py-2">Karnataka</h6>
+                <div class="w-full lg:text-lg sm:text-base text-sm text-black capitalize ">
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Kammanahlli</div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Indranagar </div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Kalyan Nagar</div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Jayanagar </div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Koramangala </div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Kammanahlli</div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Indranagar </div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Kalyan Nagar</div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Jayanagar </div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Koramangala </div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+             <div class="w-full bg-white shadow-[0_0_60px_0_rgba(0,0,0,6%)] rounded-[20px]">
+                <h6 class="w-full lg:text-2xl sm:text-xl text-lg font-medium literata text-[#D3540A] border-b border-[#E9E9E9] xl:px-6 px-4 py-2">Karnataka</h6>
+                <div class="w-full lg:text-lg sm:text-base text-sm text-black capitalize ">
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Kammanahlli</div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Indranagar </div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Kalyan Nagar</div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Jayanagar </div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Koramangala </div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Kammanahlli</div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Indranagar </div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Kalyan Nagar</div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Jayanagar </div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Koramangala </div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+             <div class="w-full bg-white shadow-[0_0_60px_0_rgba(0,0,0,6%)] rounded-[20px]">
+                <h6 class="w-full lg:text-2xl sm:text-xl text-lg font-medium literata text-[#D3540A] border-b border-[#E9E9E9] xl:px-6 px-4 py-2">Karnataka</h6>
+                <div class="w-full lg:text-lg sm:text-base text-sm text-black capitalize ">
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Kammanahlli</div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Indranagar </div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Kalyan Nagar</div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Jayanagar </div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Koramangala </div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Kammanahlli</div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Indranagar </div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Kalyan Nagar</div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Jayanagar </div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-2 "><div class="w-[calc(100%-66px)]">Koramangala </div> 
+                    <div class="flex sm:gap-4 gap-2">
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+
+                        </div>
+                        <div class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21]">
+                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+             
+        </div>
+    </div>
+</div>
+<!-- ADD BRANCH MODAL (Popup) -->
+    <div id="branchModal" class="hidden fixed inset-0 z-50 flex md:px-8 lg:px-10 pb-32  justify-end  px-4">
+        <div class="lg:mt-32  relative bg-white rounded-2xl shadow-2xl p-6 h-max !pt-8 w-full max-w-sm border border-gray-100 animate-in fade-in zoom-in duration-200">
+            <div class="flex justify-end items-center absolute top-1 right-2">
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Form Fields -->
+            <div class="space-y-4 lg:text-lg font-medium sm:text-base text-sm">
+                <div>
+                    <input type="text" id="branchName" placeholder="Branch Name" 
+                           class="w-full px-4 py-2 rounded-lg border border-[#F36E21] focus:outline-none focus:ring-1 focus:ring-[#E86A33] text-black">
+                </div>
+                
+                <div class="relative">
+                    <select id="stateName" class="w-full px-4 py-2 rounded-lg border border-[#F36E21] appearance-none focus:outline-none text-black bg-white">
+                        <option value="Karnataka">Karnataka</option>
+                        <option value="Tamil Nadu">Tamil Nadu</option>
+                        <option value="Kerala">Kerala</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-[10px] orange-text"></i>
+                </div>
+ <div class="flex justify-end lg:mt-8 sm:mt-6 mt-4">
+                             <button onclick="handleBranchSubmit()" class="flex-1 md:flex-none px-6 md:px-8 py-2 border border-[#F36E21] lg:rounded-[10px] sm:rounded-[8px] rounded-[6px] lg:text-[17px] sm:text-[15px] text-[13px] font-medium banner-gradient text-white">Submit</button>
+            </div>
+                <!-- Submit Button with HTML Onclick -->
+                <!-- <button onclick="handleBranchSubmit()" class="w-full orange-bg text-white py-2.5 rounded-lg font-medium hover:opacity-90 transition-opacity mt-4 shadow-lg shadow-orange-200">
+                    Submit
+                </button> -->
+            </div>
+        </div>
+    </div>
+</main>
+<script src="script.js"></script>
+ <script>
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('branchModal')) {
+                closeModal();
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const parentDiv = document.querySelector('.flex-1.overflow-y-auto.custom-scroll.px-4.md\\:px-8.lg\\:px-10.pb-32 > div');
+            if (parentDiv) {
+                parentDiv.innerHTML = `
+                    <div id="apkBranchGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-y-10 gap-x-4">
+                        <!-- Dynamic Grid -->
+                    </div>
+                `;
+            }
+            loadApkBranches();
+        });
+        
+        function loadApkBranches() {
+            fetch('/api/branches')
+                .then(res => res.json())
+                .then(branches => {
+                    const grid = document.getElementById('apkBranchGrid');
+                    if (!grid) return;
+                    grid.innerHTML = '';
+                    
+                    // Group by state
+                    const grouped = {};
+                    branches.forEach(b => {
+                        if (!grouped[b.state]) grouped[b.state] = [];
+                        grouped[b.state].push(b);
+                    });
+                    
+                    Object.keys(grouped).forEach(state => {
+                        const col = document.createElement('div');
+                        col.className = 'w-full bg-white shadow-[0_0_60px_0_rgba(0,0,0,6%)] rounded-[20px]';
+                        
+                        let branchRowsHtml = '';
+                        grouped[state].forEach(b => {
+                            branchRowsHtml += `
+                                <div class="flex justify-between hover:text-[#F36E21] border-b border-[#E9E9E9] transition-all ease-in-out duration-300 xl:px-6 px-4 py-3">
+                                    <div class="w-[calc(100%-66px)] font-medium text-gray-700">${b.name}</div> 
+                                    <div class="flex sm:gap-4 gap-2">
+                                        <!-- Download Config Button -->
+                                        <button onclick="showInstallOptions('${b.name}')" title="Download or Install App" class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21] transition-colors">
+                                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M6 21H18M12 3V17M7 12L12 17L17 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        </button>
+                                        <!-- Copy Link Button -->
+                                        <button onclick="copyDisplayLink('${b.name}')" title="Copy Display URL" class="lg:w-[24px] lg:h-[24px] sm:w-[20px] sm:h-[20px] w-[18px] h-[18px] text-[#5D5D5D] hover:text-[#F36E21] transition-colors">
+                                            <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M9.1718 14.8288L14.8287 9.17192M7.05086 11.293L5.63664 12.7072C4.07455 14.2693 4.07409 16.8022 5.63619 18.3643C7.19829 19.9264 9.7317 19.9259 11.2938 18.3638L12.7065 16.9498M11.2929 7.05L12.7071 5.63579C14.2692 4.07369 16.8016 4.07397 18.3637 5.63607C19.9258 7.19816 19.9257 9.73085 18.3636 11.2929L16.9501 12.7071" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        
+                        col.innerHTML = `
+                            <h6 class="w-full lg:text-2xl sm:text-xl text-lg font-semibold literata text-[#D3540A] border-b border-[#E9E9E9] xl:px-6 px-4 py-3 bg-gray-50 rounded-t-[20px]">
+                                ${state}
+                            </h6>
+                            <div class="w-full lg:text-lg sm:text-base text-sm text-black capitalize">
+                                ${branchRowsHtml}
+                            </div>
+                        `;
+                        grid.appendChild(col);
+                    });
+                })
+                .catch(err => console.error("Error loading apk branches:", err));
+        }
+
+        function downloadConfig(branchName) {
+            const config = {
+                api_base_url: window.location.origin,
+                branch: branchName
+            };
+            const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `${branchName.replace(/\s+/g, '_')}_config.json`;
+            a.click();
+        }
+
+        function copyDisplayLink(branchName) {
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in' || window.location.hostname.endsWith('amplifyapp.com');
+            const slug = branchName.toLowerCase().trim().replace(/\s+/g, '-');
+            const url = isCleanActive
+                ? window.location.origin + '/ammas-pastries/' + slug
+                : window.location.origin + '/index.html?branch=' + encodeURIComponent(branchName);
+            navigator.clipboard.writeText(url)
+                .then(() => alert(`Display sign URL copied for ${branchName}!`))
+                .catch(err => console.error("Could not copy:", err));
+        }
+
+
+
+        // PWA Install / Setup Modals Handlers
+        let deferredPrompt = null;
+        let selectedBranchName = '';
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+
+        function showInstallOptions(branchName) {
+            selectedBranchName = branchName;
+            document.getElementById('installBranchName').innerText = branchName;
+            document.getElementById('installOptionsModal').classList.remove('hidden');
+        }
+
+        function closeInstallModal() {
+            document.getElementById('installOptionsModal').classList.add('hidden');
+        }
+
+        function triggerConfigDownload() {
+            closeInstallModal();
+            if (selectedBranchName) {
+                downloadConfig(selectedBranchName);
+            }
+        }
+
+        function triggerAppInstall() {
+            closeInstallModal();
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    } else {
+                        console.log('User dismissed the install prompt');
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                document.getElementById('manualInstructionsModal').classList.remove('hidden');
+            }
+        }
+
+        function closeInstructionsModal() {
+            document.getElementById('manualInstructionsModal').classList.add('hidden');
+        }
+
+        // Dismiss modals when clicking backdrop
+        window.addEventListener('click', function(event) {
+            const installModal = document.getElementById('installOptionsModal');
+            const instructionsModal = document.getElementById('manualInstructionsModal');
+            if (event.target === installModal) {
+                closeInstallModal();
+            }
+            if (event.target === instructionsModal) {
+                closeInstructionsModal();
+            }
+        });
+    </script>
+
+    <!-- DOWNLOAD / INSTALL OPTIONS MODAL -->
+    <div id="installOptionsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+        <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full border border-gray-100 animate-in fade-in zoom-in duration-200 relative">
+            <button onclick="closeInstallModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            
+            <div class="text-center space-y-6">
+                <div class="mx-auto w-16 h-16 bg-[#F36E21]/10 rounded-2xl flex items-center justify-center text-[#F36E21]">
+                    <i class="fa-solid fa-mobile-screen-button text-3xl"></i>
+                </div>
+                
+                <div class="space-y-2">
+                    <h3 class="literata text-2xl font-bold text-gray-800">Set Up Display App</h3>
+                    <p class="text-sm text-gray-500">Choose how you want to configure this device for <span id="installBranchName" class="font-bold text-[#F36E21]"></span>.</p>
+                </div>
+
+                <div class="grid grid-cols-1 gap-4 pt-2">
+                    <!-- Option 1: Install Web App -->
+                    <button onclick="triggerAppInstall()" class="flex items-center gap-4 p-4 rounded-2xl border-2 border-gray-100 hover:border-[#F36E21] hover:bg-[#F36E21]/5 text-left transition-all duration-300 group">
+                        <div class="w-12 h-12 rounded-xl bg-gray-50 group-hover:bg-[#F36E21]/10 flex items-center justify-center text-gray-600 group-hover:text-[#F36E21] flex-shrink-0 transition-colors">
+                            <i class="fa-solid fa-house-laptop text-xl"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-gray-800 text-base">Save Web App to Home</div>
+                            <div class="text-xs text-gray-400">Add to device home screen for fullscreen kiosk mode.</div>
+                        </div>
+                    </button>
+                    
+                    <!-- Option 2: Download Config -->
+                    <button onclick="triggerConfigDownload()" class="flex items-center gap-4 p-4 rounded-2xl border-2 border-gray-100 hover:border-[#F36E21] hover:bg-[#F36E21]/5 text-left transition-all duration-300 group">
+                        <div class="w-12 h-12 rounded-xl bg-gray-50 group-hover:bg-[#F36E21]/10 flex items-center justify-center text-gray-600 group-hover:text-[#F36E21] flex-shrink-0 transition-colors">
+                            <i class="fa-solid fa-file-code text-xl"></i>
+                        </div>
+                        <div>
+                            <div class="font-bold text-gray-800 text-base">Download JSON Config</div>
+                            <div class="text-xs text-gray-400">Download config file for native display app packages.</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MANUAL INSTALLATION INSTRUCTIONS MODAL -->
+    <div id="manualInstructionsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+        <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full border border-gray-100 animate-in fade-in zoom-in duration-200 relative">
+            <button onclick="closeInstructionsModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            
+            <div class="space-y-6">
+                <div class="text-center space-y-2">
+                    <div class="mx-auto w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center text-blue-600">
+                        <i class="fa-solid fa-circle-info text-2xl"></i>
+                    </div>
+                    <h3 class="literata text-xl font-bold text-gray-800">Add to Home Screen</h3>
+                    <p class="text-xs text-gray-500">Your browser does not support automatic installation. Follow these steps to save the app:</p>
+                </div>
+                
+                <div class="space-y-4 text-sm text-gray-700 font-medium">
+                    <div class="flex gap-3 items-start">
+                        <span class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-600 flex-shrink-0">1</span>
+                        <p>Open the browser menu (usually Chrome's <i class="fa-solid fa-ellipsis-vertical mx-1"></i> or share icon <i class="fa-solid fa-share-from-square mx-1"></i>).</p>
+                    </div>
+                    <div class="flex gap-3 items-start">
+                        <span class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-600 flex-shrink-0">2</span>
+                        <p>Tap <strong class="text-gray-900 font-semibold">"Add to Home screen"</strong> or <strong class="text-gray-900 font-semibold">"Install app"</strong>.</p>
+                    </div>
+                    <div class="flex gap-3 items-start">
+                        <span class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-600 flex-shrink-0">3</span>
+                        <p>Confirm the name and click <strong class="text-gray-900 font-semibold">"Add"</strong> or <strong class="text-gray-900 font-semibold">"Install"</strong>.</p>
+                    </div>
+                </div>
+                
+                <button onclick="closeInstructionsModal()" class="w-full py-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl text-sm font-semibold text-gray-800 transition-colors">
+                    Got it
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

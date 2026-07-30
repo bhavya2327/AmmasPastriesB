@@ -1,0 +1,29 @@
+{
+  "name": "Amma's Pastries TV Display",
+  "short_name": "Ammas TV",
+  "description": "Store Display Sign & Admin Portal for Amma's Pastries",
+  "start_url": "/index.html",
+  "display": "fullscreen",
+  "background_color": "#ffffff",
+  "theme_color": "#F36E21",
+  "icons": [
+    {
+      "src": "/images/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

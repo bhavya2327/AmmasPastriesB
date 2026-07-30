@@ -1,0 +1,130 @@
+<header>
+<div id="overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/30 backdrop-blur-sm z-30 hidden lg:hidden"></div>
+
+<aside id="sidebar" class="fixed inset-y-0 left-0 w-72 h-[100dvh] bg-white border-r border-[#CCCCCC] z-40 transform -translate-x-full lg:translate-x-0 lg:static flex flex-col">
+  <div class="p-8 flex flex-col items-center border-b border-[#CCCCCC]">
+    <a id="nav-logo-link" href="/branch"><img src="images/Ammas%20logo.svg" alt="Amma's Pastries" class="lg:w-[112px] sm:w-[92px] w-[72px] object-contain"></a>
+  </div>
+
+  <!-- Admin nav -->
+  <nav id="nav-admin" class="flex-1 px-14 space-y-4 mt-4 font-bold lg:text-xl sm:text-lg text-base hidden">
+    <a href="/image" class="block font-medium menu-link text-gray-500 hover:text-black">Images</a>
+    <a href="/video" class="block font-medium menu-link text-gray-500 hover:text-black">Videos</a>
+    <a href="/announcements" class="block font-medium menu-link text-gray-500 hover:text-black">Announcements</a>
+    <a href="/waffles" class="block font-medium menu-link text-gray-500 hover:text-black">Waffles</a>
+    <a href="/branch" class="block font-medium menu-link text-gray-500 hover:text-black">Branches</a>
+  </nav>
+
+  <!-- Branch staff nav -->
+  <nav id="nav-branch" class="flex-1 px-14 space-y-4 mt-4 font-bold lg:text-xl sm:text-lg text-base hidden">
+    <a href="/details" class="block font-medium menu-link text-gray-500 hover:text-black" id="nav-media-link">Media</a>
+    <a href="/announcements" class="block font-medium menu-link text-gray-500 hover:text-black" id="nav-ann-link">Announcements</a>
+    <a href="/orders" class="block font-medium menu-link text-gray-500 hover:text-black" id="nav-tokens-link">Tokens</a>
+  </nav>
+
+  <div class="px-14 pb-6 mt-auto space-y-3">
+    <button onclick="handleLogout()" class="w-full flex items-center gap-3 text-gray-400 hover:text-red-500 transition-colors text-sm font-medium">
+      <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+    </button>
+  </div>
+  <div class="p-6 lg:hidden">
+    <button onclick="toggleSidebar()" class="w-full py-3 rounded-xl bg-gray-100 text-sm font-semibold">Close Menu</button>
+  </div>
+</aside>
+</header>
+
+    <!-- MODAL CONTAINER -->
+    <div id="branchPopupWrapper" onclick="closeBranchPopup()" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay bg-black/80">
+  <div id="branchPopup" onclick="event.stopPropagation()" class="bg-[url('images/popupbg.png')] bg-cover bg-no-repeat rounded-[40px] shadow-2xl w-full max-w-4xl max-h-[calc(100dvh-100px)] overflow-y-auto p-8 md:p-12 relative">
+    <div class="flex items-center justify-between mb-6 flex-wrap gap-4 border-b border-gray-100 pb-4">
+      <div class="flex items-center gap-3">
+        <input type="checkbox" id="selectAllBtn" class="clone-checkbox" onclick="toggleAllCheckboxes(this)">
+        <label for="selectAllBtn" class="lg:text-lg sm:text-base text-sm text-black capitalize cursor-pointer font-bold">Select All Target Branches</label>
+      </div>
+      <p class="text-xs text-gray-500 font-medium"><i class="fa-solid fa-circle-info mr-1 text-[#F36E21]"></i>All media from this branch will be cloned to the selected branches.</p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-12"></div>
+    <div class="flex justify-end lg:mt-8 sm:mt-6 mt-4">
+      <button onclick="window.location.pathname.includes('announcements') ? applyAnnouncementClone() : applySelection()" class="flex-1 md:flex-none px-6 md:px-8 py-2 border border-[#F36E21] lg:rounded-[10px] sm:rounded-[8px] rounded-[6px] lg:text-[17px] sm:text-[15px] text-[13px] font-medium banner-gradient text-white">Apply</button>
+    </div>
+  </div>
+</div>
+
+<!-- Video Popup -->
+<div id="videoOverlay" onclick="videoOverlay(event)" class="videoOverlay fixed inset-0 bg-black/70 hidden z-50 flex items-center justify-center">
+  <div id="videoContainer" class="videoContainer relative bg-white rounded-lg shadow-lg w-11/12 max-w-3xl aspect-video">
+    <button id="videoCloseBtn" onclick="videoClose()" class="videoCloseBtn absolute top-2 right-2 text-white bg-black rounded-full p-1 w-8 h-8 flex items-center justify-center z-10">✕</button>
+    <iframe id="videoIframe" class="videoIframe w-full h-full rounded-lg" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  </div>
+</div>
+
+<!-- Image Upload Modal -->
+<div id="modal-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div id="upload-popup-modal" class="relative bg-white w-full max-w-md rounded-[2.5rem] p-8 upload-soft-shadow animate-in fade-in zoom-in duration-300">
+    <button onclick="closeUploadModal()" class="absolute top-6 right-6 text-gray-400 hover:text-gray-600 transition-colors">
+      <i class="fa-solid fa-xmark text-xl"></i>
+    </button>
+    <h2 class="literata text-center text-gray-800 text-lg font-bold mb-6">Upload Image</h2>
+    <div id="upload-dropzone" class="relative group border-2 border-dashed border-gray-100 bg-[#F9FAFB] rounded-[2rem] p-10 flex flex-col items-center justify-center transition-all hover:bg-white hover:border-[#F36E21]/40 cursor-pointer">
+      <input type="file" id="upload-file-input" accept="image/png, image/jpeg, image/jpg, image/webp" class="absolute inset-0 opacity-0 cursor-pointer" onchange="uploadHandleSingleFile(this)">
+      <div class="mb-3 text-gray-400 group-hover:text-[#F36E21] transition-colors">
+        <i class="fa-solid fa-cloud-arrow-up fa-3x"></i>
+      </div>
+      <p class="text-gray-600 text-sm font-medium">Drop file here or <span class="text-[#F36E21]">browse</span></p>
+      <p class="text-gray-400 text-xs mt-1">JPEG, PNG or Image (Max 1GB)</p>
+    </div>
+    <div class="mt-6">
+      <label class="block text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-2 ml-1">Image Title</label>
+      <div class="relative">
+        <span class="absolute inset-y-0 left-4 flex items-center text-gray-300"><i class="fa-solid fa-pen-nib"></i></span>
+        <input type="text" id="upload-image-title" placeholder="Give your image a name..."
+          class="w-full pl-11 pr-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#F36E21] focus:bg-white transition-all outline-none text-gray-700 placeholder:text-gray-300 text-sm">
+      </div>
+    </div>
+    <div id="single-file-display" class="mt-6"></div>
+    <button id="upload-submit-btn" onclick="uploadSubmitAction()"
+      class="w-full mt-8 bg-[#F36E21] hover:bg-[#e05d15] text-white font-bold py-4 rounded-2xl shadow-lg shadow-[#F36E21]/20 transition-all active:scale-95 flex items-center justify-center gap-2">
+      <span id="btn-text">Upload Now</span>
+      <i id="btn-icon" class="fa-solid fa-arrow-right text-xs"></i>
+    </button>
+  </div>
+</div>
+
+<!-- Video Upload Modal -->
+<div id="videoup-modal-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div id="videoup-popup-modal" class="relative bg-white w-full max-w-md rounded-[2.5rem] p-8 videoup-soft-shadow animate-in fade-in zoom-in duration-300 max-h-[95vh] overflow-y-auto videoup-custom-scrollbar">
+    <button onclick="videoupCloseModal()" class="absolute top-6 right-6 text-gray-400 hover:text-gray-600 transition-colors">
+      <i class="fa-solid fa-xmark text-xl"></i>
+    </button>
+    <h2 class="text-center text-gray-800 text-lg font-bold mb-6">Upload Video</h2>
+    <label class="block text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-2 ml-1">Step 1: Select Video (MP4)</label>
+    <div id="videoup-video-dropzone" class="relative group border-2 border-dashed border-gray-100 bg-[#F9FAFB] rounded-[1.5rem] p-6 flex flex-col items-center justify-center transition-all hover:bg-white hover:border-[#F36E21]/40 cursor-pointer">
+      <input type="file" id="videoup-video-input" accept="video/mp4" class="absolute inset-0 opacity-0 cursor-pointer" onchange="videoupHandleVideoSelection(this)">
+      <div class="mb-2 text-gray-400 group-hover:text-[#F36E21] transition-colors"><i class="fa-solid fa-film fa-2x"></i></div>
+      <p class="text-gray-600 text-xs font-medium">Choose MP4 Video</p>
+    </div>
+    <div id="videoup-video-display" class="mt-2"></div>
+    <div class="mt-6">
+      <label class="block text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-2 ml-1">Step 2: Thumbnail Image</label>
+      <div id="videoup-thumb-dropzone" class="relative group border-2 border-dashed border-gray-100 bg-[#F9FAFB] rounded-[1.5rem] p-6 flex flex-col items-center justify-center transition-all hover:bg-white hover:border-[#F36E21]/40 cursor-pointer">
+        <input type="file" id="videoup-thumb-input" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer" onchange="videoupHandleThumbSelection(this)">
+        <div class="mb-2 text-gray-400 group-hover:text-[#F36E21] transition-colors"><i class="fa-solid fa-image fa-2x"></i></div>
+        <p class="text-gray-600 text-xs font-medium">Select Thumbnail</p>
+      </div>
+      <div id="videoup-thumb-display" class="mt-2"></div>
+    </div>
+    <div class="mt-6">
+      <label class="block text-[10px] uppercase tracking-widest text-gray-400 font-bold mb-2 ml-1">Step 3: Video Title</label>
+      <div class="relative">
+        <span class="absolute inset-y-0 left-4 flex items-center text-gray-300"><i class="fa-solid fa-heading"></i></span>
+        <input type="text" id="videoup-title-input" placeholder="Enter video name..."
+          class="w-full pl-11 pr-5 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-[#F36E21] focus:bg-white transition-all outline-none text-gray-700 placeholder:text-gray-300 text-sm">
+      </div>
+    </div>
+    <button id="videoup-submit-btn" onclick="videoupSubmitAction()"
+      class="w-full mt-8 bg-[#F36E21] hover:bg-[#e05d15] text-white font-bold py-4 rounded-2xl shadow-lg shadow-[#F36E21]/20 transition-all active:scale-95 flex items-center justify-center gap-2">
+      <span id="videoup-btn-text">Upload Video</span>
+      <i id="videoup-btn-icon" class="fa-solid fa-paper-plane text-xs"></i>
+    </button>
+  </div>
+</div>
