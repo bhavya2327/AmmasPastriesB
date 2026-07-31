@@ -8,6 +8,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="style.css" rel="stylesheet"/>
+    <script>
+        const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+            ? '' : 'https://4o62k0vv38.execute-api.ap-south-1.amazonaws.com';
+    </script>
 </head>
 <body class="flex h-screen overflow-hidden">
     <div class="header"></div>
@@ -101,7 +105,7 @@
         function loadOrders() {
             const branch = getBranchFromUrl() || currentBranch;
 
-            fetch(`/api/branches/${encodeURIComponent(branch)}/orders`)
+            fetch(`${API_BASE}/api/branches/${encodeURIComponent(branch)}/orders`)
                 .then(res => res.json())
                 .then(orders => {
                     const container = document.getElementById('ordersQueue');
@@ -141,7 +145,7 @@
             }
 
             const branch = getBranchFromUrl() || currentBranch;
-            fetch(`/api/branches/${encodeURIComponent(branch)}/orders`, {
+            fetch(`${API_BASE}/api/branches/${encodeURIComponent(branch)}/orders`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: '', token: token })
@@ -163,7 +167,7 @@
             if (!confirm(`Mark Order #${token} as completed/picked-up?`)) return;
             
             const branch = getBranchFromUrl() || currentBranch;
-            fetch(`/api/branches/${encodeURIComponent(branch)}/orders/${orderId}`, {
+            fetch(`${API_BASE}/api/branches/${encodeURIComponent(branch)}/orders/${orderId}`, {
                 method: 'DELETE'
             })
             .then(res => {
@@ -195,7 +199,7 @@
 
         function loadTokenStatus() {
             const branch = getBranchFromUrl() || currentBranch;
-            fetch('/api/branches')
+            fetch(API_BASE + '/api/branches')
                 .then(r => r.json())
                 .then(branches => {
                     const b = branches.find(x => x.name === branch || x.id === branch.toLowerCase().replace(/\s+/g, '-'));
@@ -207,7 +211,7 @@
         function toggleTokens() {
             const branch = getBranchFromUrl() || currentBranch;
             const newState = !tokensCurrentlyEnabled;
-            fetch('/api/branches/' + encodeURIComponent(branch) + '/tokens', {
+            fetch(API_BASE + '/api/branches/' + encodeURIComponent(branch) + '/tokens', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ tokensEnabled: newState })
