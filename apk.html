@@ -714,7 +714,7 @@
         });
         
         function loadApkBranches() {
-            fetch((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? '' : 'https://4o62k0vv38.execute-api.ap-south-1.amazonaws.com') + '/api/branches')
+            fetch('/api/branches')
                 .then(res => res.json())
                 .then(branches => {
                     const grid = document.getElementById('apkBranchGrid');

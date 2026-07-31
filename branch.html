@@ -13,10 +13,6 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <link rel="stylesheet" href="style.css" rel="stylesheet"/>
-<script>
-    const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-        ? '' : 'https://4o62k0vv38.execute-api.ap-south-1.amazonaws.com';
-</script>
 </head>
 <body class="flex h-screen overflow-hidden">
 <div class="header"></div>
@@ -398,7 +394,7 @@ body { font-family: "Montserrat", Arial, sans-serif; }
     }
 
     const token = localStorage.getItem('adminToken') || '';
-    fetch(API_BASE + '/api/branches', {
+    fetch('/api/branches', {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -472,7 +468,7 @@ body { font-family: "Montserrat", Arial, sans-serif; }
 
   function executeBranchDelete(branchId, branchName) {
     const token = localStorage.getItem('adminToken') || '';
-    fetch(API_BASE + '/api/branches/' + encodeURIComponent(branchId), {
+    fetch('/api/branches/' + encodeURIComponent(branchId), {
       method: 'DELETE',
       headers: {
         'Authorization': token
@@ -499,7 +495,7 @@ body { font-family: "Montserrat", Arial, sans-serif; }
 
 
   function loadBranches() {
-    fetch(API_BASE + '/api/branches')
+    fetch('/api/branches')
       .then(res => res.json())
       .then(branches => {
         window.allBranches = branches; // Store locally for delete drop-down selector

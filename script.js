@@ -690,7 +690,7 @@ function handleBranchSubmit() {
         return;
     }
 
-    fetch(API_BASE + '/api/branches', {
+    fetch('/api/branches', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: branchName, state: state })
@@ -745,7 +745,7 @@ function checkMasterStatus() {
 
 // Load branches dynamically inside the cloning popup modal
 function loadBranchesForCloning() {
-    fetch(API_BASE + '/api/branches')
+    fetch('/api/branches')
         .then(res => res.json())
         .then(branches => {
             const popupGrid = document.querySelector('#branchPopup .grid');
