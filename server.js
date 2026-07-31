@@ -78,15 +78,16 @@ for (let i = 1; i <= 40; i++) {
 }
 
 async function getWaffles(branch) {
-  const sk = branch ? `WAFFLES_${branch.toUpperCase()}` : 'WAFFLES';
-  if (docClient) {
+  if (isAWS) {
+    const id = branch ? `branchWaffles#${branch}` : 'waffles';
     try {
-      const command = new GetCommand({ TableName: DYNAMODB_TABLE, Key: { pk: 'CONFIG', sk: sk } });
+      const command = new GetCommand({ TableName: DYNAMODB_TABLE, Key: { id } });
       const response = await docClient.send(command);
-      return response.Item?.data || defaultWaffles;
+      if (response.Item && response.Item.data) {
+        return response.Item.data;
+      }
     } catch (err) {
       console.error("Error reading waffles from DynamoDB:", err);
-      return defaultWaffles;
     }
   }
   const db = await readDb();
@@ -98,11 +99,15 @@ async function getWaffles(branch) {
 }
 
 async function saveWaffles(waffles, branch) {
-  const sk = branch ? `WAFFLES_${branch.toUpperCase()}` : 'WAFFLES';
-  if (docClient) {
-    const command = new PutCommand({ TableName: DYNAMODB_TABLE, Item: { pk: 'CONFIG', sk: sk, data: waffles, updatedAt: new Date().toISOString() } });
-    await docClient.send(command);
-    return;
+  if (isAWS) {
+    const id = branch ? `branchWaffles#${branch}` : 'waffles';
+    try {
+      const command = new PutCommand({ TableName: DYNAMODB_TABLE, Item: { id, data: waffles, updatedAt: new Date().toISOString() } });
+      await docClient.send(command);
+      return;
+    } catch (err) {
+      console.error("Error saving waffles to DynamoDB:", err);
+    }
   }
   const db = await readDb();
   if (branch) {
@@ -115,10 +120,10 @@ async function saveWaffles(waffles, branch) {
 }
 
 async function getWaffleConfig(branch) {
-  const sk = branch ? `WAFFLE_CONFIG_${branch.toUpperCase()}` : 'WAFFLE_CONFIG';
-  if (docClient) {
+  if (isAWS) {
+    const id = branch ? `branchWaffleConfig#${branch}` : 'waffleConfig';
     try {
-      const command = new GetCommand({ TableName: DYNAMODB_TABLE, Key: { pk: 'CONFIG', sk: sk } });
+      const command = new GetCommand({ TableName: DYNAMODB_TABLE, Key: { id } });
       const response = await docClient.send(command);
       return response.Item?.data || { orientation: 'portrait' };
     } catch (err) {
@@ -134,11 +139,15 @@ async function getWaffleConfig(branch) {
 }
 
 async function saveWaffleConfig(config, branch) {
-  const sk = branch ? `WAFFLE_CONFIG_${branch.toUpperCase()}` : 'WAFFLE_CONFIG';
-  if (docClient) {
-    const command = new PutCommand({ TableName: DYNAMODB_TABLE, Item: { pk: 'CONFIG', sk: sk, data: config, updatedAt: new Date().toISOString() } });
-    await docClient.send(command);
-    return;
+  if (isAWS) {
+    const id = branch ? `branchWaffleConfig#${branch}` : 'waffleConfig';
+    try {
+      const command = new PutCommand({ TableName: DYNAMODB_TABLE, Item: { id, data: config, updatedAt: new Date().toISOString() } });
+      await docClient.send(command);
+      return;
+    } catch (err) {
+      console.error("Error saving waffle config to DynamoDB:", err);
+    }
   }
   const db = await readDb();
   if (branch) {
@@ -606,7 +615,10 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-const sqliteStorage = require('./sqliteStorage');
+let sqliteStorage;
+if (!isAWS) {
+  sqliteStorage = require('./sqliteStorage');
+}
 
 // --- AWS MIDDLEWARE ---
 if (isAWS) {
