@@ -324,8 +324,8 @@ function toggleMediaActive(mediaId, isActive) {
     const token = localStorage.getItem('adminToken') || '';
 
     const url = isGlobalPage
-      ? `/api/global/media/${mediaId}/toggle`
-      : `/api/branches/${encodeURIComponent(branch)}/media/${mediaId}/toggle`;
+      ? `${API_BASE}/api/global/media/${mediaId}/toggle`
+      : `${API_BASE}/api/branches/${encodeURIComponent(branch)}/media/${mediaId}/toggle`;
 
     fetch(url, {
         method: 'PUT',
@@ -379,8 +379,8 @@ function executeCardDelete(mediaId, btn) {
     const token = localStorage.getItem('adminToken') || '';
 
     const url = isGlobalPage
-      ? `/api/global/media/${mediaId}`
-      : `/api/branches/${encodeURIComponent(branch)}/media/${mediaId}`;
+      ? `${API_BASE}/api/global/media/${mediaId}`
+      : `${API_BASE}/api/branches/${encodeURIComponent(branch)}/media/${mediaId}`;
 
     fetch(url, {
         method: 'DELETE',
@@ -417,8 +417,8 @@ function saveMediaOrder(orderArray) {
     const token = localStorage.getItem('adminToken') || '';
 
     const url = isGlobalPage
-      ? `/api/global/media/order`
-      : `/api/branches/${encodeURIComponent(branch)}/media/order`;
+      ? `${API_BASE}/api/global/media/order`
+      : `${API_BASE}/api/branches/${encodeURIComponent(branch)}/media/order`;
 
     fetch(url, {
         method: 'PUT',
@@ -637,7 +637,7 @@ function toggleBannerClick() {
     // Optimistically update UI
     updateBannerUI(newState);
 
-    fetch(`/api/branches/${encodeURIComponent(branch)}/announcements/banner-settings/toggle`, {
+    fetch(`${API_BASE}/api/branches/${encodeURIComponent(branch)}/announcements/banner-settings/toggle`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
