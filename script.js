@@ -176,16 +176,18 @@ function checkBranchAccess() {
             const slug = userBranch.toLowerCase().trim().replace(/\s+/g, '-');
             const pathname = window.location.pathname;
             const parts = pathname.split('/').filter(Boolean);
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in';
             if (pathname.includes('details') || pathname.includes('image') || pathname.includes('video') || 
                 (parts.length === 2 && parts[0] === 'admin') || 
                 (parts.length === 1 && !pathname.includes('.'))) {
-                _navigate('/admin/' + slug);
+                _navigate(isCleanActive ? '/admin/' + slug : '/details.html?branch=' + encodeURIComponent(userBranch));
             } else if (pathname.includes('announcements')) {
-                _navigate('/announcements/' + slug);
+                _navigate(isCleanActive ? '/announcements/' + slug : '/announcements.html?branch=' + encodeURIComponent(userBranch));
             } else if (pathname.includes('orders')) {
-                _navigate('/orders/' + slug);
+                _navigate(isCleanActive ? '/orders/' + slug : '/orders.html?branch=' + encodeURIComponent(userBranch));
             } else if (pathname.includes('portal')) {
-                _navigate('/portal/' + slug);
+                _navigate(isCleanActive ? '/portal/' + slug : '/portal.html?branch=' + encodeURIComponent(userBranch));
             }
         }
     }
@@ -214,12 +216,14 @@ function applyRoleBasedNav() {
             const tokensLink = document.getElementById('nav-tokens-link');
             const logoLink = document.getElementById('nav-logo-link');
             const slug = branch.toLowerCase().trim().replace(/\s+/g, '-');
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in';
             // Always route Media link to /:slug from any page
-            if (mediaLink) mediaLink.href = '/' + slug;
-            if (annLink) annLink.href = '/announcements/' + slug;
-            if (wafflesLink) wafflesLink.href = '/branch/menu?branch=' + encodeURIComponent(branch);
-            if (tokensLink) tokensLink.href = '/orders/' + slug;
-            if (logoLink) logoLink.href = '/portal/' + slug;
+            if (mediaLink) mediaLink.href = isCleanActive ? '/' + slug : '/media.html?branch=' + encodeURIComponent(branch);
+            if (annLink) annLink.href = isCleanActive ? '/announcements/' + slug : '/announcements.html?branch=' + encodeURIComponent(branch);
+            if (wafflesLink) wafflesLink.href = isCleanActive ? '/branch/menu?branch=' + encodeURIComponent(branch) : '/admin/waffles.html?branch=' + encodeURIComponent(branch);
+            if (tokensLink) tokensLink.href = isCleanActive ? '/orders/' + slug : '/orders.html?branch=' + encodeURIComponent(branch);
+            if (logoLink) logoLink.href = isCleanActive ? '/portal/' + slug : '/portal.html?branch=' + encodeURIComponent(branch);
         }
     }
 }
