@@ -221,7 +221,7 @@ function applyRoleBasedNav() {
             // Always route Media link to /:slug from any page
             if (mediaLink) mediaLink.href = isCleanActive ? '/' + slug : '/media.html?branch=' + encodeURIComponent(branch);
             if (annLink) annLink.href = isCleanActive ? '/announcements/' + slug : '/announcements.html?branch=' + encodeURIComponent(branch);
-            if (wafflesLink) wafflesLink.href = isCleanActive ? '/branch/menu?branch=' + encodeURIComponent(branch) : '/admin/waffles.html?branch=' + encodeURIComponent(branch);
+            if (wafflesLink) wafflesLink.href = isCleanActive ? '/branch/menu?branch=' + encodeURIComponent(branch) : '/branch/menu.html?branch=' + encodeURIComponent(branch);
             if (tokensLink) tokensLink.href = isCleanActive ? '/orders/' + slug : '/orders.html?branch=' + encodeURIComponent(branch);
             if (logoLink) logoLink.href = isCleanActive ? '/portal/' + slug : '/portal.html?branch=' + encodeURIComponent(branch);
         }
@@ -656,6 +656,7 @@ function currentPage() {
          else if (originalHref === '/video') targetFile = '/video.html';
          else if (originalHref === '/announcements') targetFile = '/announcements.html';
          else if (originalHref === '/admin/waffles') targetFile = '/admin/waffles.html';
+         else if (originalHref === '/branch/menu') targetFile = '/branch/menu.html';
          else if (originalHref === '/branch') targetFile = '/branch.html';
          
          if (targetFile) {
