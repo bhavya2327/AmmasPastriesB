@@ -30,7 +30,7 @@
         <img src="images/ice2.png" class="absolute opacity-[15%] w-full h-full object-cover top-0">
         <img src="images/ice3.png" class="absolute w-full object-contain top-0">
         <div class="w-full h-full p-[2vh] sm:p-[4vh] relative flex flex-col justify-start">
-            <h1 class="main-title text-[#BE336C] text-center uppercase tracking-widest font-bold text-[3vh] sm:text-[4vh] mt-[2vh] mb-[2vh] shrink-0">OUR MENU</h1>
+            <h1 class="text-[#BE336C] text-center uppercase tracking-widest font-extrabold text-[4vh] sm:text-[5vh] mt-[2vh] mb-[2vh] shrink-0 font-sans">MENU</h1>
             <div class="rounded-[2vh] bg-[#BE336C] relative flex-1 min-h-0 flex flex-col overflow-hidden">
                 <img src="images/ice1.png" class="opacity-10 absolute w-full h-full rounded-[2vh] object-cover top-0 pointer-events-none">
                 <div id="waffle-container" class="text-white flex-1 min-h-0 relative flex flex-col p-[2vh]">
@@ -86,9 +86,14 @@
             
             const gridDiv = document.createElement('div');
             
-            const cols = orientation === 'landscape' ? 3 : 2;
+            // In landscape, we have much less vertical height, so dynamically calculate columns based on items
+            // to ensure we don't end up with too many rows.
+            let cols = 2;
+            if (orientation === 'landscape') {
+                cols = waffles.length > 24 ? 4 : 3;
+            }
             const numRows = Math.ceil(waffles.length / cols);
-            const gridColsClass = orientation === 'landscape' ? 'grid-cols-3' : 'grid-cols-2';
+            const gridColsClass = cols === 4 ? 'grid-cols-4' : (cols === 3 ? 'grid-cols-3' : 'grid-cols-2');
             gridDiv.className = `grid ${gridColsClass} flex-1 min-h-0 w-full gap-x-[2vh] z-10`;
             gridDiv.style.gridTemplateRows = `repeat(${numRows}, minmax(0, 1fr))`;
             
@@ -109,10 +114,24 @@
                 
                 const priceNum = w.price.replace(/[^0-9.]/g, '');
                 
-                
-                const nameTextClass = orientation === 'landscape' ? 'text-[2.5vh] sm:text-[3vh]' : 'text-[1.4vh] sm:text-[1.8vh]';
-                const descTextClass = orientation === 'landscape' ? 'text-[1.8vh] sm:text-[2vh]' : 'text-[1vh] sm:text-[1.2vh]';
-                const priceTextClass = orientation === 'landscape' ? 'text-[2.5vh] sm:text-[3vh]' : 'text-[1.6vh] sm:text-[2vh]';
+                // Use vw/vh based on orientation for better responsiveness
+                let nameTextClass, descTextClass, priceTextClass;
+                if (orientation === 'landscape') {
+                    // if lots of rows, make font smaller to fit
+                    if (numRows > 8) {
+                        nameTextClass = 'text-[1.8vh] sm:text-[2.2vh]';
+                        descTextClass = 'text-[1.2vh] sm:text-[1.4vh]';
+                        priceTextClass = 'text-[1.8vh] sm:text-[2.2vh]';
+                    } else {
+                        nameTextClass = 'text-[2.5vh] sm:text-[3vh]';
+                        descTextClass = 'text-[1.5vh] sm:text-[1.8vh]';
+                        priceTextClass = 'text-[2.5vh] sm:text-[3vh]';
+                    }
+                } else {
+                    nameTextClass = 'text-[1.4vh] sm:text-[1.8vh]';
+                    descTextClass = 'text-[1vh] sm:text-[1.2vh]';
+                    priceTextClass = 'text-[1.6vh] sm:text-[2vh]';
+                }
                 
                 itemDiv.innerHTML = `
                     <div class="flex-1 pr-[1vh] min-w-0 flex flex-col justify-center h-full">
