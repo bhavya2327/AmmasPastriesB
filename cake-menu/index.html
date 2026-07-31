@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Waffle Menu - TV Portrait</title>
+    <title>Waffle Menu</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="style.css" rel="stylesheet">
     <link href="font/stylesheet.css" rel="stylesheet">
@@ -75,8 +75,10 @@
             const section = document.getElementById('main-section');
             if (orientation === 'landscape') {
                 section.className = 'orientation-landscape';
+                document.title = 'Waffle Menu - TV Landscape';
             } else {
                 section.className = 'orientation-portrait';
+                document.title = 'Waffle Menu - TV Portrait';
             }
             
             const container = document.getElementById('waffle-container');
