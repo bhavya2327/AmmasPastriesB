@@ -1542,12 +1542,12 @@ if (!isAWSLambda) {
   });
 
   app.get('/branch/menu', (req, res) => {
-  res.sendFile(path.join(__dirname, 'branch-menu.html'));
-});
+    res.sendFile(path.join(__dirname, 'branch', 'menu.html'));
+  });
 
   app.get('/admin/waffles', (req, res) => {
-  res.sendFile(path.join(__dirname, 'waffles.html'));
-});
+    res.sendFile(path.join(__dirname, 'admin', 'waffles.html'));
+  });
 
   // Named pages without .html
   const htmlPages = ['login', 'branch', 'details', 'announcements', 'orders', 'image', 'video', 'apk', 'header', 'index1', 'media', 'announcements-view'];
