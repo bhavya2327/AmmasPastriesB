@@ -54,7 +54,8 @@ function loadMedia() {
 }
 
 function loadAnnouncements() {
-    const branch = getBranchFromUrl() || branchName;
+    const isAnnAdminPage = window.location.pathname.includes('announcements');
+    const branch = getBranchFromUrl() || (isAnnAdminPage ? 'global' : branchName);
     if (!annList) return;
 
     fetch(`/api/branches/${encodeURIComponent(branch)}/announcements?_t=${Date.now()}`)
@@ -434,7 +435,8 @@ function submitNewAnnouncement() {
         return;
     }
 
-    const branch = getBranchFromUrl() || branchName;
+    const isAnnAdminPage = window.location.pathname.includes('announcements');
+    const branch = getBranchFromUrl() || (isAnnAdminPage ? 'global' : branchName);
     const token = localStorage.getItem('adminToken') || '';
     fetch(`/api/branches/${encodeURIComponent(branch)}/announcements`, {
         method: 'POST',
@@ -458,7 +460,8 @@ function submitNewAnnouncement() {
 
 // Toggle announcement active status
 function toggleAnnouncementActive(annId, isActive) {
-    const branch = getBranchFromUrl() || branchName;
+    const isAnnAdminPage = window.location.pathname.includes('announcements');
+    const branch = getBranchFromUrl() || (isAnnAdminPage ? 'global' : branchName);
     const token = localStorage.getItem('adminToken') || '';
     fetch(`/api/branches/${encodeURIComponent(branch)}/announcements/${annId}/toggle`, {
         method: 'PUT',
@@ -524,7 +527,8 @@ function deleteAnnouncement(annId, rowElement) {
 }
 
 function executeAnnouncementDelete(annId, rowElement) {
-    const branch = getBranchFromUrl() || branchName;
+    const isAnnAdminPage = window.location.pathname.includes('announcements');
+    const branch = getBranchFromUrl() || (isAnnAdminPage ? 'global' : branchName);
     const token = localStorage.getItem('adminToken') || '';
     fetch(`/api/branches/${encodeURIComponent(branch)}/announcements/${annId}`, {
         method: 'DELETE',
