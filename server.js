@@ -44,7 +44,7 @@ if (!isAWSLambda) {
 // --- AWS CLIENTS ---
 const s3Client = isAWS ? new S3Client({ region: process.env.AWS_REGION || 'us-east-1' }) : null;
 const dynamoClient = isAWS ? new DynamoDBClient({ region: process.env.AWS_REGION || 'us-east-1' }) : null;
-const docClient = dynamoClient ? DynamoDBDocumentClient.from(dynamoClient) : null;
+const docClient = dynamoClient ? DynamoDBDocumentClient.from(dynamoClient, { marshallOptions: { removeUndefinedValues: true } }) : null;
 
 const DYNAMODB_TABLE = process.env.DYNAMODB_TABLE || 'ammas-pastries-backend-db-v2';
 const S3_BUCKET_NAME = process.env.S3_BUCKET_NAME;

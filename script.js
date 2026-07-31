@@ -292,12 +292,22 @@ function getActiveBranchId() {
 
 // Global helper: Test Display Sign
 function testDisplaySign() {
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in';
     const branch = getBranchFromUrl();
     if (branch) {
         const slug = branch.toLowerCase().trim().replace(/\s+/g, '-');
-        window.open('/ammas-pastries/' + slug + '?preview=true', '_blank');
+        if (isCleanActive) {
+            window.open('/ammas-pastries/' + slug + '?preview=true', '_blank');
+        } else {
+            window.open('/index.html?branch=' + encodeURIComponent(branch) + '&preview=true', '_blank');
+        }
     } else {
-        window.open('/ammas-pastries?preview=true', '_blank');
+        if (isCleanActive) {
+            window.open('/ammas-pastries?preview=true', '_blank');
+        } else {
+            window.open('/index.html?preview=true', '_blank');
+        }
     }
 }
 
@@ -610,15 +620,43 @@ function currentPage() {
   const rawPath = pathname.split('/').pop() || '';
   const currentClean = firstSeg || rawPath.replace(/\.html$/, '');
 
+  const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in';
+  const userBranch = getBranchFromUrl() || localStorage.getItem('userBranch') || '';
+
   document.querySelectorAll('.menu-link').forEach(link => {
-      const href = link.getAttribute('href') || '';
-      // Extract first meaningful segment from the href
+      let href = link.getAttribute('href') || '';
+      
+      // Keep track of the original raw destination (e.g. '/image' or '/admin/waffles')
+      const originalHref = href;
+      
+      // Clean it for active state comparison
       const hrefParts = href.split('/').filter(Boolean);
-      const hrefClean = (hrefParts[0] || '').replace(/\.html$/, '').split('?')[0];
+      let hrefClean = (hrefParts[hrefParts.length - 1] || '').replace(/\.html$/, '').split('?')[0];
+      // special case: if it was just /branch or /admin/waffles
+      if (hrefParts[0] === 'admin' && hrefParts[1] === 'waffles') hrefClean = 'waffles';
+      else if (hrefParts[0] === 'branch') hrefClean = 'branch';
+      else hrefClean = (hrefParts[0] || '').replace(/\.html$/, '').split('?')[0];
+
       if (hrefClean && hrefClean === currentClean) {
           link.classList.add('menu-active');
       } else {
           link.classList.remove('menu-active');
+      }
+
+      // Rewrite the URL if we need fallback routing and it's a root-relative link
+      if (!isCleanActive && href.startsWith('/')) {
+         // Determine target file
+         let targetFile = '';
+         if (originalHref === '/image') targetFile = '/image.html';
+         else if (originalHref === '/video') targetFile = '/video.html';
+         else if (originalHref === '/announcements') targetFile = '/announcements.html';
+         else if (originalHref === '/admin/waffles') targetFile = '/admin/waffles.html';
+         else if (originalHref === '/branch') targetFile = '/branch.html';
+         
+         if (targetFile) {
+             link.setAttribute('href', targetFile + (userBranch ? '?branch=' + encodeURIComponent(userBranch) : ''));
+         }
       }
   });
 }
