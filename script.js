@@ -210,12 +210,14 @@ function applyRoleBasedNav() {
             nav.classList.remove('hidden');
             const mediaLink = document.getElementById('nav-media-link');
             const annLink = document.getElementById('nav-ann-link');
+            const wafflesLink = document.getElementById('nav-waffles-link');
             const tokensLink = document.getElementById('nav-tokens-link');
             const logoLink = document.getElementById('nav-logo-link');
             const slug = branch.toLowerCase().trim().replace(/\s+/g, '-');
             // Always route Media link to /:slug from any page
             if (mediaLink) mediaLink.href = '/' + slug;
             if (annLink) annLink.href = '/announcements/' + slug;
+            if (wafflesLink) wafflesLink.href = '/branch/menu?branch=' + encodeURIComponent(branch);
             if (tokensLink) tokensLink.href = '/orders/' + slug;
             if (logoLink) logoLink.href = '/portal/' + slug;
         }
@@ -248,6 +250,7 @@ function getBranchFromUrl() {
         // 2. Match /:branchSlug or /admin/:branchSlug (not /portal/*, /ammas-pastries/*, or other named routes)
         if (parts.length === 2 && parts[0] === 'admin') {
             const slug = parts[1];
+            if (slug.toLowerCase() === 'waffles') return '';
             const stored = localStorage.getItem('userBranch') || '';
             if (stored && stored.toLowerCase().replace(/\s+/g, '-') === slug.toLowerCase()) {
                 return stored;

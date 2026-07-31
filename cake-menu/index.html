@@ -7,9 +7,29 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="style.css" rel="stylesheet">
     <link href="font/stylesheet.css" rel="stylesheet">
+    <style>
+        .orientation-portrait {
+            width: 100vw;
+            height: 100vh;
+            max-width: calc(100vh * 9 / 16);
+            max-height: calc(100vw * 16 / 9);
+            margin: auto;
+        }
+        .orientation-landscape {
+            width: 100vw;
+            height: 100vh;
+            max-width: calc(100vh * 16 / 9);
+            max-height: calc(100vw * 9 / 16);
+            margin: auto;
+        }
+        body {
+            display: flex;
+            background-color: #000;
+        }
+    </style>
 </head>
-<body class="h-screen w-screen overflow-hidden bg-[#BE336C]">
-   <section class="h-full w-full">
+<body class="h-screen w-screen overflow-hidden bg-black">
+   <section id="main-section" class="h-full w-full">
     <div class="relative w-full h-full bg-white flex flex-col">
         <img src="images/ice2.png" class="absolute opacity-[15%] w-full h-full object-cover top-0">
         <img src="images/ice3.png" class="absolute w-full object-contain top-0">
@@ -35,15 +55,35 @@
             // We use absolute path to the backend API running on the same domain
             // or relative if served through the same server. Since this HTML is served
             // at /cake-menu/ we can reach the api at /api/waffles
-            let apiUrl = '/api/waffles';
+            const urlParams = new URLSearchParams(window.location.search);
+            const branch = urlParams.get('branch');
+            const branchQuery = branch ? '?branch=' + encodeURIComponent(branch) : '';
+            
+            let apiUrl = '/api/waffles' + branchQuery;
             // In case it's opened directly via file:// or another domain we fallback to localhost
             if (window.location.protocol === 'file:' || window.location.hostname === 'yashvi.spydernet.in') {
-                apiUrl = 'http://localhost:3000/api/waffles';
+                apiUrl = 'http://localhost:3000/api/waffles' + branchQuery;
             }
             
             const res = await fetch(apiUrl);
             if (!res.ok) throw new Error('Network response was not ok');
             const waffles = await res.json();
+            
+            let orientation = 'portrait';
+            try {
+                const configRes = await fetch('/api/waffles/config' + branchQuery);
+                if (configRes.ok) {
+                    const config = await configRes.json();
+                    orientation = config.orientation || 'portrait';
+                }
+            } catch(e) { console.error('Config fetch failed', e); }
+            
+            const section = document.getElementById('main-section');
+            if (orientation === 'landscape') {
+                section.className = 'orientation-landscape';
+            } else {
+                section.className = 'orientation-portrait';
+            }
             
             const container = document.getElementById('waffle-container');
             const footer = document.getElementById('waffle-footer');
@@ -51,18 +91,23 @@
             container.innerHTML = '';
             
             const gridDiv = document.createElement('div');
-            // Force rows to compress to fit the height
-            const numRows = Math.ceil(waffles.length / 2);
-            gridDiv.className = 'grid grid-cols-2 flex-1 min-h-0 w-full gap-x-[2vh] z-10';
+            
+            const cols = orientation === 'landscape' ? 4 : 2;
+            const numRows = Math.ceil(waffles.length / cols);
+            const gridColsClass = orientation === 'landscape' ? 'grid-cols-4' : 'grid-cols-2';
+            gridDiv.className = `grid ${gridColsClass} flex-1 min-h-0 w-full gap-x-[2vh] z-10`;
             gridDiv.style.gridTemplateRows = `repeat(${numRows}, minmax(0, 1fr))`;
             
             waffles.forEach((w, index) => {
                 const descHtml = w.description.replace(/\\n/g, '<br>');
-                const isLeftCol = index % 2 === 0;
+                const colIndex = index % cols;
+                const isRightMost = colIndex === cols - 1;
                 
-                const borderClasses = isLeftCol ? 'border-r border-dashed border-white/40 pr-[1.5vh]' : 'pl-[1.5vh]';
+                let borderClasses = isRightMost ? 'pl-[1.5vh]' : 'border-r border-dashed border-white/40 pr-[1.5vh]';
+                if (colIndex > 0 && !isRightMost) borderClasses += ' pl-[1.5vh]';
+                
                 // Only add bottom border if not in the last row
-                const isLastRow = Math.floor(index / 2) === numRows - 1;
+                const isLastRow = Math.floor(index / cols) === numRows - 1;
                 const bottomBorder = isLastRow ? '' : 'border-b border-dashed border-white/40';
                 
                 const itemDiv = document.createElement('div');

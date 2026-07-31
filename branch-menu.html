@@ -1,13 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>
-  (function() {
-    if (!localStorage.getItem('adminToken') || localStorage.getItem('userRole') !== 'admin') {
-      window.location.replace('/login');
-    }
-  })();
-</script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <base href="/">
@@ -143,9 +137,7 @@
   async function loadWaffles() {
     try {
       const branchQuery = getBranchFromUrl() ? '?branch=' + encodeURIComponent(getBranchFromUrl()) : '';
-      const res = await fetch('/api/waffles' + branchQuery, {
-        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('adminToken') }
-      });
+      const res = await fetch('/api/waffles' + branchQuery);
       waffles = await res.json();
       renderWaffles();
     } catch (err) {
@@ -223,17 +215,13 @@
       isVeg: document.getElementById('waffleIsVeg').checked
     };
 
-    const branchQuery = getBranchFromUrl() ? '?branch=' + encodeURIComponent(getBranchFromUrl()) : '';
+    const url = id ? `/api/branches/${getBranchFromUrl()}/waffles/${id}` : `/api/branches/${getBranchFromUrl()}/waffles`;
     const method = id ? 'PUT' : 'POST';
-    const url = (id ? '/api/waffles/' + id : '/api/waffles') + branchQuery;
 
     try {
       const res = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('adminToken')
-        },
+        method: method,
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
       if (res.ok) {
@@ -271,10 +259,8 @@
     btn.disabled = true;
     
     try {
-      const branchQuery = getBranchFromUrl() ? '?branch=' + encodeURIComponent(getBranchFromUrl()) : '';
-      const res = await fetch('/api/waffles/' + id + branchQuery, {
-        method: 'DELETE',
-        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('adminToken') }
+      const res = await fetch(`/api/branches/${getBranchFromUrl()}/waffles/${id}`, {
+        method: 'DELETE'
       });
       if (res.ok) {
         await loadWaffles();
@@ -307,14 +293,11 @@
 
   async function updateOrientation() {
     const orientation = document.getElementById('tvOrientation').value;
+    const payload = { orientation };
     try {
-      const branchQuery = getBranchFromUrl() ? '?branch=' + encodeURIComponent(getBranchFromUrl()) : '';
-      await fetch('/api/waffles/config' + branchQuery, {
+      await fetch(`/api/branches/${getBranchFromUrl()}/waffles/config`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + localStorage.getItem('adminToken')
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ orientation })
       });
     } catch (err) {

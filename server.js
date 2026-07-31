@@ -77,10 +77,11 @@ for (let i = 1; i <= 40; i++) {
   });
 }
 
-async function getWaffles() {
+async function getWaffles(branch) {
+  const sk = branch ? `WAFFLES_${branch.toUpperCase()}` : 'WAFFLES';
   if (docClient) {
     try {
-      const command = new GetCommand({ TableName: DYNAMODB_TABLE, Key: { pk: 'CONFIG', sk: 'WAFFLES' } });
+      const command = new GetCommand({ TableName: DYNAMODB_TABLE, Key: { pk: 'CONFIG', sk: sk } });
       const response = await docClient.send(command);
       return response.Item?.data || defaultWaffles;
     } catch (err) {
@@ -89,17 +90,63 @@ async function getWaffles() {
     }
   }
   const db = await readDb();
+  if (branch) {
+    db.branchWaffles = db.branchWaffles || {};
+    return db.branchWaffles[branch] || defaultWaffles;
+  }
   return db.waffles || defaultWaffles;
 }
 
-async function saveWaffles(waffles) {
+async function saveWaffles(waffles, branch) {
+  const sk = branch ? `WAFFLES_${branch.toUpperCase()}` : 'WAFFLES';
   if (docClient) {
-    const command = new PutCommand({ TableName: DYNAMODB_TABLE, Item: { pk: 'CONFIG', sk: 'WAFFLES', data: waffles, updatedAt: new Date().toISOString() } });
+    const command = new PutCommand({ TableName: DYNAMODB_TABLE, Item: { pk: 'CONFIG', sk: sk, data: waffles, updatedAt: new Date().toISOString() } });
     await docClient.send(command);
     return;
   }
   const db = await readDb();
-  db.waffles = waffles;
+  if (branch) {
+    db.branchWaffles = db.branchWaffles || {};
+    db.branchWaffles[branch] = waffles;
+  } else {
+    db.waffles = waffles;
+  }
+  await saveDb(db);
+}
+
+async function getWaffleConfig(branch) {
+  const sk = branch ? `WAFFLE_CONFIG_${branch.toUpperCase()}` : 'WAFFLE_CONFIG';
+  if (docClient) {
+    try {
+      const command = new GetCommand({ TableName: DYNAMODB_TABLE, Key: { pk: 'CONFIG', sk: sk } });
+      const response = await docClient.send(command);
+      return response.Item?.data || { orientation: 'portrait' };
+    } catch (err) {
+      console.error("Error reading waffle config from DynamoDB:", err);
+      return { orientation: 'portrait' };
+    }
+  }
+  const db = await readDb();
+  if (branch) {
+    return db.branchWaffleConfig?.[branch] || db.waffleConfig || { orientation: 'portrait' };
+  }
+  return db.waffleConfig || { orientation: 'portrait' };
+}
+
+async function saveWaffleConfig(config, branch) {
+  const sk = branch ? `WAFFLE_CONFIG_${branch.toUpperCase()}` : 'WAFFLE_CONFIG';
+  if (docClient) {
+    const command = new PutCommand({ TableName: DYNAMODB_TABLE, Item: { pk: 'CONFIG', sk: sk, data: config, updatedAt: new Date().toISOString() } });
+    await docClient.send(command);
+    return;
+  }
+  const db = await readDb();
+  if (branch) {
+    db.branchWaffleConfig = db.branchWaffleConfig || {};
+    db.branchWaffleConfig[branch] = config;
+  } else {
+    db.waffleConfig = config;
+  }
   await saveDb(db);
 }
 
@@ -115,7 +162,11 @@ const defaultDb = {
   globalMedia: [],
   branchMedia: {},
   branchAnnouncements: {},
-  branchOrders: {}
+  branchOrders: {},
+  waffles: [],
+  branchWaffles: {},
+  waffleConfig: {},
+  branchWaffleConfig: {}
 };
 
 let globalDbCache = null;
@@ -126,7 +177,8 @@ async function initDatabase() {
     return;
   }
 
-  const localData = readLocalDb();
+  await sqliteStorage.initSqlite();
+  const localData = await readLocalDb();
   if (supabase) {
     try {
       console.log("Connecting to Supabase DB...");
@@ -178,31 +230,39 @@ async function initDatabase() {
   }
 }
 
-function readLocalDb() {
-  if (!fs.existsSync(dbPath)) {
-    saveLocalDb(defaultDb);
-    return defaultDb;
-  }
+async function readLocalDb() {
   try {
-    const data = fs.readFileSync(dbPath, 'utf8');
-    return JSON.parse(data);
+    const data = await sqliteStorage.readFullDb();
+    if (data && data.branches && data.branches.length > 0) {
+      return data;
+    }
+    // Fallback to reading db.json if SQLite is empty
+    if (fs.existsSync(dbPath)) {
+      const jsonData = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
+      await sqliteStorage.writeFullDb(jsonData); // migrate it
+      return jsonData;
+    }
+    await sqliteStorage.writeFullDb(defaultDb);
+    return defaultDb;
   } catch (err) {
-    console.error("Error reading database file, returning defaults:", err);
+    console.error("Error reading database, returning defaults:", err);
     return defaultDb;
   }
 }
 
-function saveLocalDb(data) {
+async function saveLocalDb(data) {
   try {
+    await sqliteStorage.writeFullDb(data);
+    // Also save to json for backward compatibility during transition if needed
     fs.writeFileSync(dbPath, JSON.stringify(data, null, 2), 'utf8');
   } catch (err) {
-    console.error("Error saving database file:", err);
+    console.error("Error saving database to SQLite:", err);
   }
 }
 
 async function readDb() {
   if (!globalDbCache) {
-    globalDbCache = readLocalDb();
+    globalDbCache = await readLocalDb();
   }
   return globalDbCache;
 }
@@ -210,7 +270,7 @@ async function readDb() {
 async function saveDb(data) {
   data.lastUpdated = Date.now();
   globalDbCache = data;
-  saveLocalDb(data);
+  await saveLocalDb(data);
   if (supabase) {
     try {
       const { error } = await supabase
@@ -546,6 +606,8 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
+const sqliteStorage = require('./sqliteStorage');
+
 // --- AWS MIDDLEWARE ---
 if (isAWS) {
   app.use(async (req, res, next) => {
@@ -615,7 +677,67 @@ app.get('/manifest.json', (req, res) => {
   res.json(defaultManifest);
 });
 
-// --- API ROUTES ---
+// --- BRANCH WAFFLES ROUTES (NO ADMIN AUTH) ---
+app.get('/api/branches/:branchId/waffles/config', async (req, res) => {
+  const branch = req.params.branchId || '';
+  const config = await getWaffleConfig(branch);
+  res.json(config);
+});
+
+app.post('/api/branches/:branchId/waffles/config', async (req, res) => {
+  const { orientation } = req.body;
+  const branch = req.params.branchId || '';
+  if (!orientation) return res.status(400).json({ error: "Orientation is required" });
+  await saveWaffleConfig({ orientation }, branch);
+  res.json({ success: true });
+});
+
+app.get('/api/branches/:branchId/waffles', async (req, res) => {
+  const branch = req.params.branchId || '';
+  const waffles = await getWaffles(branch);
+  res.json(waffles);
+});
+
+app.post('/api/branches/:branchId/waffles', async (req, res) => {
+  const { name, description, price, category, isVeg } = req.body;
+  const branch = req.params.branchId || '';
+  if (!name || !price) return res.status(400).json({ error: "Name and price required" });
+  
+  const waffles = await getWaffles(branch);
+  const newWaffle = { id: 'w-' + Date.now(), name, description: description || '', price, category: category || 'Uncategorized', isVeg: isVeg !== undefined ? isVeg : true };
+  waffles.push(newWaffle);
+  await saveWaffles(waffles, branch);
+  res.status(201).json({ success: true, waffle: newWaffle });
+});
+
+app.put('/api/branches/:branchId/waffles/:id', async (req, res) => {
+  const { id } = req.params;
+  const branch = req.params.branchId || '';
+  const { name, description, price, category, isVeg } = req.body;
+  const waffles = await getWaffles(branch);
+  
+  const idx = waffles.findIndex(w => w.id === id);
+  if (idx === -1) return res.status(404).json({ error: "Waffle not found" });
+  
+  waffles[idx] = { ...waffles[idx], name, description: description || '', price, category: category || 'Uncategorized', isVeg: isVeg !== undefined ? isVeg : true };
+  await saveWaffles(waffles, branch);
+  res.json({ success: true, waffle: waffles[idx] });
+});
+
+app.delete('/api/branches/:branchId/waffles/:id', async (req, res) => {
+  const { id } = req.params;
+  const branch = req.params.branchId || '';
+  let waffles = await getWaffles(branch);
+  const initLen = waffles.length;
+  waffles = waffles.filter(w => w.id !== id);
+  
+  if (waffles.length === initLen) return res.status(404).json({ error: "Waffle not found" });
+  
+  await saveWaffles(waffles, branch);
+  res.json({ success: true, message: "Waffle deleted" });
+});
+
+// --- ORDERS ROUTES ---
 
 // Auth Verification (admin only)
 app.get('/api/auth/verify', adminOnly, (_req, res) => {
@@ -1273,44 +1395,62 @@ app.delete('/api/branches/:branchId/announcements/:id', async (req, res) => {
 });
 
 // --- WAFFLES ROUTES ---
+app.get('/api/waffles/config', async (req, res) => {
+  const branch = req.query.branch || '';
+  const config = await getWaffleConfig(branch);
+  res.json(config);
+});
+
+app.post('/api/waffles/config', adminOnly, async (req, res) => {
+  const { orientation } = req.body;
+  const branch = req.query.branch || '';
+  if (!orientation) return res.status(400).json({ error: "Orientation is required" });
+  await saveWaffleConfig({ orientation }, branch);
+  res.json({ success: true });
+});
+
 app.get('/api/waffles', async (req, res) => {
-  const waffles = await getWaffles();
+  const branch = req.query.branch || '';
+  const waffles = await getWaffles(branch);
   res.json(waffles);
 });
 
 app.post('/api/waffles', adminOnly, async (req, res) => {
   const { name, description, price, category, isVeg } = req.body;
+  const branch = req.query.branch || '';
   if (!name || !price) return res.status(400).json({ error: "Name and price required" });
   
-  const waffles = await getWaffles();
+  const waffles = await getWaffles(branch);
   const newWaffle = { id: 'w-' + Date.now(), name, description: description || '', price, category: category || 'Uncategorized', isVeg: isVeg !== undefined ? isVeg : true };
   waffles.push(newWaffle);
-  await saveWaffles(waffles);
+  await saveWaffles(waffles, branch);
   res.status(201).json({ success: true, waffle: newWaffle });
 });
 
 app.put('/api/waffles/:id', adminOnly, async (req, res) => {
   const { id } = req.params;
+  const branch = req.query.branch || '';
   const { name, description, price, category, isVeg } = req.body;
-  const waffles = await getWaffles();
+  const waffles = await getWaffles(branch);
   
   const idx = waffles.findIndex(w => w.id === id);
   if (idx === -1) return res.status(404).json({ error: "Waffle not found" });
   
   waffles[idx] = { ...waffles[idx], name, description: description || '', price, category: category || 'Uncategorized', isVeg: isVeg !== undefined ? isVeg : true };
-  await saveWaffles(waffles);
+  await saveWaffles(waffles, branch);
   res.json({ success: true, waffle: waffles[idx] });
 });
 
 app.delete('/api/waffles/:id', adminOnly, async (req, res) => {
   const { id } = req.params;
-  let waffles = await getWaffles();
+  const branch = req.query.branch || '';
+  let waffles = await getWaffles(branch);
   const initLen = waffles.length;
   waffles = waffles.filter(w => w.id !== id);
   
   if (waffles.length === initLen) return res.status(404).json({ error: "Waffle not found" });
   
-  await saveWaffles(waffles);
+  await saveWaffles(waffles, branch);
   res.json({ success: true, message: "Waffle deleted" });
 });
 
@@ -1389,8 +1529,16 @@ if (!isAWSLambda) {
     res.sendFile(path.join(__dirname, 'index.html'));
   });
 
+  app.get('/branch/menu', (req, res) => {
+  res.sendFile(path.join(__dirname, 'branch-menu.html'));
+});
+
+  app.get('/admin/waffles', (req, res) => {
+  res.sendFile(path.join(__dirname, 'waffles.html'));
+});
+
   // Named pages without .html
-  const htmlPages = ['login', 'branch', 'details', 'announcements', 'orders', 'image', 'video', 'apk', 'header', 'index1', 'media', 'announcements-view', 'waffles'];
+  const htmlPages = ['login', 'branch', 'details', 'announcements', 'orders', 'image', 'video', 'apk', 'header', 'index1', 'media', 'announcements-view'];
   htmlPages.forEach(page => {
     app.get(`/${page}`, (_req, res) => {
       res.sendFile(path.join(__dirname, `${page}.html`));
