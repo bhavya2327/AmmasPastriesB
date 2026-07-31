@@ -106,7 +106,7 @@ async function saveWaffles(waffles) {
 // --- LOCAL JSON FALLBACK FUNCTIONS ---
 const dbPath = process.env.TEST_DB_PATH || path.join(__dirname, 'data', 'db.json');
 const dbDir = path.dirname(dbPath);
-if (!fs.existsSync(dbDir)) {
+if (!isAWSLambda && !fs.existsSync(dbDir)) {
   fs.mkdirSync(dbDir);
 }
 
