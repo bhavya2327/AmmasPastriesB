@@ -87,7 +87,7 @@
             const branch = getBranchFromUrl() || currentBranch;
             const slug = branch.toLowerCase().trim().replace(/\s+/g, '-');
             const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-            const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in' || window.location.hostname.endsWith('amplifyapp.com');
+            const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in';
             if (isCleanActive) {
                 window.location.href = '/' + slug;
             } else {

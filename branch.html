@@ -131,7 +131,7 @@
 
   function copyBranchUrl(button, branchName) {
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in' || window.location.hostname.endsWith('amplifyapp.com');
+    const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in';
     const slug = branchName.toLowerCase().trim().replace(/\s+/g, '-');
     const url = isCleanActive
       ? window.location.origin + '/' + slug
@@ -517,7 +517,8 @@ body { font-family: "Montserrat", Arial, sans-serif; }
           grouped[state].forEach(b => {
             const statusIcon = b.online ? 'images/green.svg' : 'images/red.svg';
             const slug = b.name.toLowerCase().trim().replace(/\s+/g, '-');
-            const link = '/admin/' + slug;
+            const isCleanActive = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname === 'tv.spydernet.in';
+            const link = isCleanActive ? '/admin/' + slug : '/details.html?branch=' + encodeURIComponent(b.name);
             branchItemsHtml += `
               <a href="${link}" class="grid grid-cols-[auto_1fr_auto] items-center gap-x-3 group py-2 border-b border-gray-100/50 text-black hover:text-[#F36E21] transition-all ease-in-out duration-300">
                 <img src="${statusIcon}" class="w-[16px] h-[16px] object-contain mt-[1px] flex-shrink-0">

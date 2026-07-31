@@ -127,7 +127,7 @@
             if (isAdminPortal) return; // stay at /portal for admin generic view
             if (!branch) return;
             const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-            const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in' || window.location.hostname.endsWith('amplifyapp.com');
+            const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in';
             if (!isCleanActive) return;
             const slug = branch.toLowerCase().trim().replace(/\s+/g, '-');
             const expectedPath = '/portal/' + slug;

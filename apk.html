@@ -783,7 +783,7 @@
 
         function copyDisplayLink(branchName) {
             const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-            const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in' || window.location.hostname.endsWith('amplifyapp.com');
+            const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in';
             const slug = branchName.toLowerCase().trim().replace(/\s+/g, '-');
             const url = isCleanActive
                 ? window.location.origin + '/ammas-pastries/' + slug

@@ -22,6 +22,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // --- ENVIRONMENT AND CONFIG ---
 const isAWSLambda = !!process.env.AWS_LAMBDA_FUNCTION_NAME;
+if (isAWSLambda) {
+  delete process.env.AWS_PROFILE;
+}
 const isAWS = isAWSLambda || process.env.USE_AWS_LOCALLY === 'true';
 const uploadsDir = isAWSLambda ? '/tmp' : path.join(__dirname, 'uploads');
 

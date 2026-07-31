@@ -11,7 +11,7 @@ const API_BASE = window.__API_BASE__ || (
 // Proactively strips .html from ALL navigations before the browser sees them
 (function() {
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in' || window.location.hostname.endsWith('amplifyapp.com');
+    const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in';
     if (!isCleanActive) return;
 
     // Helper: convert a .html URL to a clean URL
@@ -232,7 +232,7 @@ function getBranchFromUrl() {
 
     // On local/Amplify clean URLs, the path may be /:branchSlug or /media/:branchSlug
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in' || window.location.hostname.endsWith('amplifyapp.com');
+    const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in';
     if (isCleanActive) {
         const pathname = window.location.pathname;
         const parts = pathname.split('/').filter(Boolean);

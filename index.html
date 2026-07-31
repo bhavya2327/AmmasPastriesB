@@ -250,7 +250,7 @@
         // redirect to the correct HTML file so the page loads and cleans up properly.
         (function() {
             const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-            const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in' || window.location.hostname.endsWith('amplifyapp.com');
+            const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in';
             if (!isCleanActive) return;
 
             const pathname = window.location.pathname;
@@ -320,7 +320,7 @@
         // --- CLEAN URL REWRITING ---
         (function() {
             const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-            const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in' || window.location.hostname.endsWith('amplifyapp.com');
+            const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in';
             if (!isCleanActive) return;
             const pathname = window.location.pathname;
             const params = new URLSearchParams(window.location.search);
@@ -347,7 +347,7 @@
 
             // On local/Amplify, the path may be /ammas-pastries/:slug
             const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-            const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in' || window.location.hostname.endsWith('amplifyapp.com');
+            const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in';
             const pathname = window.location.pathname;
             if (isCleanActive && pathname.startsWith('/ammas-pastries/')) {
                 const slug = pathname.replace('/ammas-pastries/', '');
@@ -451,7 +451,7 @@
                         btn.innerText = b.name;
                         btn.onclick = () => {
                             const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-                            const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in' || window.location.hostname.endsWith('amplifyapp.com');
+                            const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in';
                             if (isCleanActive) {
                                 const slug = b.name.toLowerCase().trim().replace(/\s+/g, '-');
                                 window.location.href = '/ammas-pastries/' + slug;
