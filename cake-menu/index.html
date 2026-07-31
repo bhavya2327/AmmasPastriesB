@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waffle Menu - TV Portrait</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="style.css" rel="stylesheet">
+    <link href="font/stylesheet.css" rel="stylesheet">
+</head>
+<body class="h-screen w-screen overflow-hidden bg-[#BE336C]">
+   <section class="h-full w-full">
+    <div class="relative w-full h-full bg-white flex flex-col">
+        <img src="images/ice2.png" class="absolute opacity-[15%] w-full h-full object-cover top-0">
+        <img src="images/ice3.png" class="absolute w-full object-contain top-0">
+        <div class="w-full h-full p-[2vh] sm:p-[4vh] relative flex flex-col justify-start">
+            <h1 class="main-title text-[#BE336C] text-center uppercase tracking-widest font-bold text-[3vh] sm:text-[4vh] mt-[2vh] mb-[2vh] shrink-0">OUR MENU</h1>
+            <div class="rounded-[2vh] bg-[#BE336C] relative flex-1 min-h-0 flex flex-col overflow-hidden">
+                <img src="images/ice1.png" class="opacity-10 absolute w-full h-full rounded-[2vh] object-cover top-0 pointer-events-none">
+                <div id="waffle-container" class="text-white flex-1 min-h-0 relative flex flex-col p-[2vh]">
+                    <!-- Waffles will be loaded here dynamically -->
+                    <div class="shrink-0 relative flex justify-between items-end mt-auto pt-[1vh]" id="waffle-footer">
+                        <img src="images/logo.svg" alt="" class="w-[6vh] z-10">
+                        <img src="images/ice4.png" alt="" class="w-[20vh] absolute -bottom-[2vh] right-[1vh] z-10 pointer-events-none">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   </section>
+
+   <script>
+    async function loadWaffles() {
+        try {
+            // We use absolute path to the backend API running on the same domain
+            // or relative if served through the same server. Since this HTML is served
+            // at /cake-menu/ we can reach the api at /api/waffles
+            let apiUrl = '/api/waffles';
+            // In case it's opened directly via file:// or another domain we fallback to localhost
+            if (window.location.protocol === 'file:' || window.location.hostname === 'yashvi.spydernet.in') {
+                apiUrl = 'http://localhost:3000/api/waffles';
+            }
+            
+            const res = await fetch(apiUrl);
+            if (!res.ok) throw new Error('Network response was not ok');
+            const waffles = await res.json();
+            
+            const container = document.getElementById('waffle-container');
+            const footer = document.getElementById('waffle-footer');
+            
+            container.innerHTML = '';
+            
+            const gridDiv = document.createElement('div');
+            // Force rows to compress to fit the height
+            const numRows = Math.ceil(waffles.length / 2);
+            gridDiv.className = 'grid grid-cols-2 flex-1 min-h-0 w-full gap-x-[2vh] z-10';
+            gridDiv.style.gridTemplateRows = `repeat(${numRows}, minmax(0, 1fr))`;
+            
+            waffles.forEach((w, index) => {
+                const descHtml = w.description.replace(/\\n/g, '<br>');
+                const isLeftCol = index % 2 === 0;
+                
+                const borderClasses = isLeftCol ? 'border-r border-dashed border-white/40 pr-[1.5vh]' : 'pl-[1.5vh]';
+                // Only add bottom border if not in the last row
+                const isLastRow = Math.floor(index / 2) === numRows - 1;
+                const bottomBorder = isLastRow ? '' : 'border-b border-dashed border-white/40';
+                
+                const itemDiv = document.createElement('div');
+                itemDiv.className = `flex justify-between items-center overflow-hidden ${borderClasses} ${bottomBorder}`;
+                
+                const priceNum = w.price.replace(/[^0-9.]/g, '');
+                
+                itemDiv.innerHTML = `
+                    <div class="flex-1 pr-[1vh] min-w-0 flex flex-col justify-center h-full">
+                        <h6 class="name text-[1.4vh] sm:text-[1.8vh] font-bold leading-tight truncate">${w.name}</h6>
+                        <p class="ingredients text-white/90 text-[1vh] sm:text-[1.2vh] leading-tight truncate mt-[2px] opacity-80 block">${descHtml}</p>
+                    </div>
+                    <div class="pl-[1vh] shrink-0 flex items-center h-full">
+                        <h5 class="price text-[1.6vh] sm:text-[2vh] font-bold">₹${priceNum}</h5>
+                    </div>
+                `;
+                gridDiv.appendChild(itemDiv);
+            });
+            
+            container.appendChild(gridDiv);
+            container.appendChild(footer);
+            
+        } catch (error) {
+            console.error('Error fetching waffles:', error);
+            // Fallback could be implemented here
+        }
+    }
+    
+    // Load once DOM is ready
+    document.addEventListener('DOMContentLoaded', loadWaffles);
+    
+    // Auto refresh every 30 seconds to keep display sign updated
+    setInterval(loadWaffles, 30000);
+   </script>
+        </div>
+    </div>
+   </section>
+
+</body>
+</html>

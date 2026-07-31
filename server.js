@@ -27,7 +27,7 @@ const uploadsDir = isAWSLambda ? '/tmp' : path.join(__dirname, 'uploads');
 
 if (!isAWSLambda) {
   // Serve cake menu locally
-  app.use('/cake-menu', express.static(path.join(__dirname, '../../cake-menu')));
+  app.use('/cake-menu', express.static(path.join(__dirname, 'cake-menu')));
   // Serve uploaded files statically locally
   if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir);

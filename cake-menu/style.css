@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+.freehand{font-family: 'Freehand 521';}
+ body {
+          
+  font-family: "Montserrat", sans-serif;
+            background-color: #fff;
+            /* display: flex;
+            justify-content: center;
+            align-items: center; 
+             min-height: 100vh;
+            margin: 0;
+            overflow: hidden; */
+        }
+.main-title{
+    font-size: 80px;
+    line-height: 70px;
+    font-family: 'Freehand 521';
+    font-weight: 400;
+    text-align: center;
+}
+
+.name{font-family: "Montserrat", sans-serif; font-size: 32px; font-weight:500 ; line-height: 40px; letter-spacing:3% ;}
+.ingredients{font-family: "Montserrat", sans-serif; font-size:25px; font-weight:500 ; line-height: 40px; letter-spacing:3% ;}
+.price{font-family: "Montserrat", sans-serif; font-size:32px ; font-weight:500 ; line-height:40px; letter-spacing:3% ;}
+@media (max-width:1024px) {
+    .main-title{
+    font-size: 70px;
+    line-height: 60px;
+}
+    .name{font-size: 27px; line-height: 35px;}
+.ingredients{font-size:20px; line-height: 35px;}
+.price{font-size:27px ; line-height:35px;}
+
+}
+@media (max-width:640px) {
+      .main-title{
+    font-size: 50px;
+    line-height: 40px;
+}
+    .name{font-size: 18px; line-height: 28px;}
+.ingredients{font-size:14px; line-height: 25px;}
+.price{font-size:18px ; line-height:28px;}
+
+}

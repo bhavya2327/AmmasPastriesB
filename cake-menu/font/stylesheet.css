@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'Freehand 521';
+    src: url('Freehand521BT-RegularC.woff2') format('woff2'),
+        url('Freehand521BT-RegularC.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
