@@ -52,18 +52,16 @@
    <script>
     async function loadWaffles() {
         try {
+            // Extract branch from URL query params
+            const params = new URLSearchParams(window.location.search);
+            const branch = params.get('branch') || '';
+            
             // We use absolute path to the backend API running on the same domain
             // or relative if served through the same server. Since this HTML is served
             // at /cake-menu/ we can reach the api at /api/waffles
-            const urlParams = new URLSearchParams(window.location.search);
-            const branch = urlParams.get('branch');
-            const branchQuery = branch ? '?branch=' + encodeURIComponent(branch) : '';
+            let API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:3000' : 'https://4o62k0vv38.execute-api.ap-south-1.amazonaws.com';
             
-            let apiUrl = '/api/waffles' + branchQuery;
-            // In case it's opened directly via file:// or another domain we fallback to localhost
-            if (window.location.protocol === 'file:' || window.location.hostname === 'yashvi.spydernet.in') {
-                apiUrl = 'http://localhost:3000/api/waffles' + branchQuery;
-            }
+            let apiUrl = `${API_BASE}/api/waffles?branch=${encodeURIComponent(branch)}`;
             
             const res = await fetch(apiUrl);
             if (!res.ok) throw new Error('Network response was not ok');
