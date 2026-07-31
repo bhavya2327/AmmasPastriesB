@@ -236,10 +236,14 @@ function renderAnnouncements(anns) {
 
     // Determine if we're on the details/branch page (not a dedicated announcements page)
     const pathParts = window.location.pathname.split('/').filter(Boolean);
-    const isDetailsBranchPage = window.location.pathname.includes('details.html') ||
+    // Never treat the standalone announcements page as a branch details page
+    const isStandaloneAnnPage = window.location.pathname.includes('announcements');
+    const isDetailsBranchPage = !isStandaloneAnnPage && (
+        window.location.pathname.includes('details.html') ||
         (pathParts.length === 2 && pathParts[0] === 'admin') ||
         (pathParts.length === 1 &&
-         !['login','branch','portal','announcements','orders','image','video','apk','ammas-pastries','media','admin'].includes(pathParts[0]));
+         !['login','branch','portal','announcements','orders','image','video','apk','ammas-pastries','media','admin'].includes(pathParts[0]))
+    );
 
     if (anns.length === 0) {
         if (emptyEl) {
