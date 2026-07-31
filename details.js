@@ -54,10 +54,14 @@ function loadMedia() {
 }
 
 function loadAnnouncements() {
-    const branch = getBranchFromUrl() || branchName;
+    const branch = getBranchFromUrl();
     if (!annList) return;
 
-    fetch(`/api/branches/${encodeURIComponent(branch)}/announcements?_t=${Date.now()}`)
+    // On the standalone global announcements admin page (/announcements.html with no branch),
+    // always load from 'global'. Otherwise load the branch-specific ones.
+    const targetBranch = branch || 'global';
+
+    fetch(`/api/branches/${encodeURIComponent(targetBranch)}/announcements?_t=${Date.now()}`)
         .then(res => res.json())
         .then(anns => {
             const bannerSettings = anns.find(a => a.id === 'banner-settings');
@@ -236,10 +240,15 @@ function renderAnnouncements(anns) {
 
     // Determine if we're on the details/branch page (not a dedicated announcements page)
     const pathParts = window.location.pathname.split('/').filter(Boolean);
-    const isDetailsBranchPage = window.location.pathname.includes('details.html') ||
+    // isDetailsBranchPage = true only when on /details.html or /admin/... BUT NOT on /announcements.html
+    const isStandaloneAnnouncementsPage = window.location.pathname.includes('announcements.html') ||
+        pathParts[0] === 'announcements';
+    const isDetailsBranchPage = !isStandaloneAnnouncementsPage && (
+        window.location.pathname.includes('details.html') ||
         (pathParts.length === 2 && pathParts[0] === 'admin') ||
         (pathParts.length === 1 &&
-         !['login','branch','portal','announcements','orders','image','video','apk','ammas-pastries','media','admin'].includes(pathParts[0]));
+         !['login','branch','portal','announcements','orders','image','video','apk','ammas-pastries','media','admin'].includes(pathParts[0]))
+    );
 
     if (anns.length === 0) {
         if (emptyEl) {
@@ -277,7 +286,8 @@ function renderAnnouncements(anns) {
                 <span class="text-xs text-gray-400 whitespace-nowrap">${item.active ? '<span class="text-green-500 font-semibold">Active</span>' : 'Hidden'}</span>
             `;
         } else {
-            // Full announcements page: checkbox + text + trash
+            // Full announcements page (admin/global): checkbox + text + trash delete button
+            const branchForDelete = getBranchFromUrl() || 'global';
             row.innerHTML = `
                 <div class="flex items-start gap-4 flex-1">
                     <label class="cursor-pointer custom-checkbox mt-1">
@@ -286,8 +296,11 @@ function renderAnnouncements(anns) {
                             <i class="fa-solid fa-check text-[10px] ${item.active ? '' : 'hidden'}"></i>
                         </div>
                     </label>
-                    <span class="text-black text-sm sm:text-base font-medium pr-4">${item.text}</span>
+                    <div class="flex-1 flex flex-col">
+                        <span class="text-black text-sm sm:text-base font-medium pr-4">${item.text || '(empty)'}</span>
+                    </div>
                 </div>
+                <span class="text-xs text-gray-400 whitespace-nowrap mr-3">${item.active ? '<span class="text-green-500 font-semibold">Active</span>' : 'Hidden'}</span>
                 <button onclick="deleteAnnouncement('${item.id}', this.closest('[data-ann-id]'))" class="trash-btn w-8 h-8 bg-white rounded-full shadow flex items-center justify-center hover:text-red-500 transition-colors">
                     <i class="fa-solid fa-trash-can text-xs"></i>
                 </button>
@@ -520,7 +533,7 @@ function deleteAnnouncement(annId, rowElement) {
 }
 
 function executeAnnouncementDelete(annId, rowElement) {
-    const branch = getBranchFromUrl() || branchName;
+    const branch = getBranchFromUrl() || 'global';
     const token = localStorage.getItem('adminToken') || '';
     fetch(`/api/branches/${encodeURIComponent(branch)}/announcements/${annId}`, {
         method: 'DELETE',
