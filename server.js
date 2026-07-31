@@ -1357,7 +1357,13 @@ app.get('/api/branches/:branchId/announcements', async (req, res) => {
   const { branchId } = req.params;
   try {
     const result = await getSyncedBranchAnnouncements(branchId);
-    res.json(result);
+    // Filter out any corrupted non-object items (e.g. "[object Object]" strings)
+    const cleaned = result.filter(a => a && typeof a === 'object' && !Array.isArray(a));
+    if (cleaned.length !== result.length) {
+      // Auto-save the cleaned list back to fix bad data in DynamoDB
+      await saveBranchData(branchId, 'branchAnnouncements', cleaned);
+    }
+    res.json(cleaned);
   } catch (err) {
     console.error("Error fetching announcements:", err);
     res.status(500).json({ error: "Failed to fetch announcements" });

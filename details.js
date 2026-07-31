@@ -32,8 +32,8 @@ function loadMedia() {
     const isGlobalPage = window.location.pathname.includes('image') || window.location.pathname.includes('video');
 
     const fetchUrl = isGlobalPage || !branch
-      ? '/api/global/media'
-      : `/api/branches/${encodeURIComponent(branch)}/media`;
+      ? `${API_BASE}/api/global/media`
+      : `${API_BASE}/api/branches/${encodeURIComponent(branch)}/media`;
 
     fetch(fetchUrl)
         .then(res => res.json())
@@ -58,7 +58,7 @@ function loadAnnouncements() {
     const branch = getBranchFromUrl() || (isAnnAdminPage ? 'global' : branchName);
     if (!annList) return;
 
-    fetch(`/api/branches/${encodeURIComponent(branch)}/announcements?_t=${Date.now()}`)
+    fetch(`${API_BASE}/api/branches/${encodeURIComponent(branch)}/announcements?_t=${Date.now()}`)
         .then(res => res.json())
         .then(anns => {
             const bannerSettings = anns.find(a => a.id === 'banner-settings');
@@ -311,8 +311,8 @@ function toggleMediaActive(mediaId, isActive) {
     const token = localStorage.getItem('adminToken') || '';
 
     const url = isGlobalPage
-      ? `/api/global/media/${mediaId}/toggle`
-      : `/api/branches/${encodeURIComponent(branch)}/media/${mediaId}/toggle`;
+      ? `${API_BASE}/api/global/media/${mediaId}/toggle`
+      : `${API_BASE}/api/branches/${encodeURIComponent(branch)}/media/${mediaId}/toggle`;
 
     fetch(url, {
         method: 'PUT',
@@ -366,8 +366,8 @@ function executeCardDelete(mediaId, btn) {
     const token = localStorage.getItem('adminToken') || '';
 
     const url = isGlobalPage
-      ? `/api/global/media/${mediaId}`
-      : `/api/branches/${encodeURIComponent(branch)}/media/${mediaId}`;
+      ? `${API_BASE}/api/global/media/${mediaId}`
+      : `${API_BASE}/api/branches/${encodeURIComponent(branch)}/media/${mediaId}`;
 
     fetch(url, {
         method: 'DELETE',
@@ -404,8 +404,8 @@ function saveMediaOrder(orderArray) {
     const token = localStorage.getItem('adminToken') || '';
 
     const url = isGlobalPage
-      ? `/api/global/media/order`
-      : `/api/branches/${encodeURIComponent(branch)}/media/order`;
+      ? `${API_BASE}/api/global/media/order`
+      : `${API_BASE}/api/branches/${encodeURIComponent(branch)}/media/order`;
 
     fetch(url, {
         method: 'PUT',
@@ -438,7 +438,7 @@ function submitNewAnnouncement() {
     const isAnnAdminPage = window.location.pathname.includes('announcements');
     const branch = getBranchFromUrl() || (isAnnAdminPage ? 'global' : branchName);
     const token = localStorage.getItem('adminToken') || '';
-    fetch(`/api/branches/${encodeURIComponent(branch)}/announcements`, {
+    fetch(`${API_BASE}/api/branches/${encodeURIComponent(branch)}/announcements`, {
         method: 'POST',
         headers: { 
             'Content-Type': 'application/json',
@@ -463,7 +463,7 @@ function toggleAnnouncementActive(annId, isActive) {
     const isAnnAdminPage = window.location.pathname.includes('announcements');
     const branch = getBranchFromUrl() || (isAnnAdminPage ? 'global' : branchName);
     const token = localStorage.getItem('adminToken') || '';
-    fetch(`/api/branches/${encodeURIComponent(branch)}/announcements/${annId}/toggle`, {
+    fetch(`${API_BASE}/api/branches/${encodeURIComponent(branch)}/announcements/${annId}/toggle`, {
         method: 'PUT',
         headers: { 
             'Content-Type': 'application/json',
@@ -530,7 +530,7 @@ function executeAnnouncementDelete(annId, rowElement) {
     const isAnnAdminPage = window.location.pathname.includes('announcements');
     const branch = getBranchFromUrl() || (isAnnAdminPage ? 'global' : branchName);
     const token = localStorage.getItem('adminToken') || '';
-    fetch(`/api/branches/${encodeURIComponent(branch)}/announcements/${annId}`, {
+    fetch(`${API_BASE}/api/branches/${encodeURIComponent(branch)}/announcements/${annId}`, {
         method: 'DELETE',
         headers: {
             'Authorization': token
