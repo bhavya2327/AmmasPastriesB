@@ -4,7 +4,7 @@ const API_BASE = window.__API_BASE__ || (
         ? ''
         : (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:' || !window.location.hostname
             ? 'http://localhost:3000'
-            : 'https://xd2g0dj86k.execute-api.ap-south-1.amazonaws.com')
+            : 'https://4o62k0vv38.execute-api.ap-south-1.amazonaws.com')
 );
 
 // --- CLEAN URL SYSTEM ---

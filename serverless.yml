@@ -1,11 +1,11 @@
-service: ammas-pastries-backend
+service: ammas-pastries-custom
 
 provider:
   name: aws
   runtime: nodejs18.x
   region: ap-south-1
   stage: prod
-  profile: default
+  profile: ammas
   environment:
     DYNAMODB_TABLE: ${self:service}-db-v2
     S3_BUCKET_NAME: ${self:service}-media-${aws:accountId}-${self:provider.region}
