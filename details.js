@@ -1,5 +1,10 @@
 // Branch-specific media management script
 
+// Resolve the correct API backend URL dynamically
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? ''
+    : 'https://4o62k0vv38.execute-api.ap-south-1.amazonaws.com';
+
 const urlBranch = getBranchFromUrl();
 const isGlobalPage = window.location.pathname.includes('image') || 
                      window.location.pathname.includes('video') || 
@@ -32,8 +37,8 @@ function loadMedia() {
     const isGlobalPage = window.location.pathname.includes('image') || window.location.pathname.includes('video');
 
     const fetchUrl = isGlobalPage || !branch
-      ? '/api/global/media'
-      : `/api/branches/${encodeURIComponent(branch)}/media`;
+      ? `${API_BASE}/api/global/media`
+      : `${API_BASE}/api/branches/${encodeURIComponent(branch)}/media`;
 
     fetch(fetchUrl)
         .then(res => res.json())
@@ -61,7 +66,7 @@ function loadAnnouncements() {
     // always load from 'global'. Otherwise load the branch-specific ones.
     const targetBranch = branch || 'global';
 
-    fetch(`/api/branches/${encodeURIComponent(targetBranch)}/announcements?_t=${Date.now()}`)
+    fetch(`${API_BASE}/api/branches/${encodeURIComponent(targetBranch)}/announcements?_t=${Date.now()}`)
         .then(res => res.json())
         .then(anns => {
             const bannerSettings = anns.find(a => a.id === 'banner-settings');
@@ -443,9 +448,9 @@ function submitNewAnnouncement() {
         return;
     }
 
-    const branch = getBranchFromUrl() || branchName;
+    const branch = getBranchFromUrl() || 'global';
     const token = localStorage.getItem('adminToken') || '';
-    fetch(`/api/branches/${encodeURIComponent(branch)}/announcements`, {
+    fetch(`${API_BASE}/api/branches/${encodeURIComponent(branch)}/announcements`, {
         method: 'POST',
         headers: { 
             'Content-Type': 'application/json',
@@ -467,9 +472,9 @@ function submitNewAnnouncement() {
 
 // Toggle announcement active status
 function toggleAnnouncementActive(annId, isActive) {
-    const branch = getBranchFromUrl() || branchName;
+    const branch = getBranchFromUrl() || 'global';
     const token = localStorage.getItem('adminToken') || '';
-    fetch(`/api/branches/${encodeURIComponent(branch)}/announcements/${annId}/toggle`, {
+    fetch(`${API_BASE}/api/branches/${encodeURIComponent(branch)}/announcements/${annId}/toggle`, {
         method: 'PUT',
         headers: { 
             'Content-Type': 'application/json',
@@ -535,7 +540,7 @@ function deleteAnnouncement(annId, rowElement) {
 function executeAnnouncementDelete(annId, rowElement) {
     const branch = getBranchFromUrl() || 'global';
     const token = localStorage.getItem('adminToken') || '';
-    fetch(`/api/branches/${encodeURIComponent(branch)}/announcements/${annId}`, {
+    fetch(`${API_BASE}/api/branches/${encodeURIComponent(branch)}/announcements/${annId}`, {
         method: 'DELETE',
         headers: {
             'Authorization': token
