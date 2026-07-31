@@ -27,17 +27,12 @@
 <body class="h-screen w-screen overflow-hidden bg-gray-100">
    <section id="main-section" class="h-full w-full shadow-2xl">
     <div class="relative w-full h-full bg-white flex flex-col">
-        <img src="images/ice2.png" class="absolute opacity-[15%] w-full h-full object-cover top-0">
         <div class="w-full h-full p-[2vh] sm:p-[4vh] relative flex flex-col justify-start">
             <h1 class="text-[#BE336C] text-center uppercase tracking-widest font-extrabold text-[4vh] sm:text-[5vh] mt-[2vh] mb-[2vh] shrink-0 font-sans">MENU</h1>
             <div class="rounded-[2vh] bg-[#BE336C] relative flex-1 min-h-0 flex flex-col overflow-hidden">
                 <img src="images/ice1.png" class="opacity-10 absolute w-full h-full rounded-[2vh] object-cover top-0 pointer-events-none">
                 <div id="waffle-container" class="text-white flex-1 min-h-0 relative flex flex-col p-[2vh]">
                     <!-- Waffles will be loaded here dynamically -->
-                    <div class="shrink-0 relative flex justify-between items-end mt-auto pt-[1vh]" id="waffle-footer">
-                        <img src="images/logo.svg" alt="" class="w-[6vh] z-10">
-                        <img src="images/ice4.png" alt="" class="w-[20vh] absolute -bottom-[2vh] right-[1vh] z-10 pointer-events-none">
-                    </div>
                 </div>
             </div>
         </div>
@@ -81,7 +76,6 @@
             }
             
             const container = document.getElementById('waffle-container');
-            const footer = document.getElementById('waffle-footer');
             
             container.innerHTML = '';
             
@@ -147,7 +141,6 @@
             });
             
             container.appendChild(gridDiv);
-            container.appendChild(footer);
             
         } catch (error) {
             console.error('Error fetching waffles:', error);
