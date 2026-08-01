@@ -30,6 +30,11 @@
             <i class="fa-solid fa-cloud-arrow-up"></i>
             <span class="uppercase whitespace-nowrap">Upload Image</span>
         </label>
+        <button id="orientationToggleBtn" onclick="toggleDisplayOrientation()"
+            class="flex items-center gap-2 border px-4 md:px-5 py-1 lg:rounded-[10px] sm:rounded-[8px] rounded-[6px] lg:text-[17px] sm:text-[15px] text-[13px] font-medium transition-all cursor-pointer border-[#F36E21] text-[#F36E21]">
+            <i class="fa-solid fa-mobile-screen-button text-xs"></i>
+            <span class="uppercase whitespace-nowrap hidden sm:inline">Portrait</span>
+        </button>
         <button onclick="testDisplaySign()"
             class="flex items-center gap-2 border border-[#F36E21] text-[#F36E21] px-4 md:px-5 py-1 lg:rounded-[10px] sm:rounded-[8px] rounded-[6px] lg:text-[17px] sm:text-[15px] text-[13px] font-medium hover:bg-[#F36E21] hover:text-white transition-all cursor-pointer">
             <i class="fa-solid fa-desktop text-sm"></i>
@@ -85,5 +90,8 @@
 
 <script src="script.js?v=3"></script>
 <script src="details.js?v=3"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', loadDisplayOrientation);
+</script>
 </body>
 </html>

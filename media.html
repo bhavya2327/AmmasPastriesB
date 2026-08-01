@@ -70,6 +70,11 @@ window.addEventListener('beforeinstallprompt', function(e) {
           <i class="fa-solid fa-ticket text-xs"></i>
           <span class="uppercase whitespace-nowrap hidden sm:inline">Tokens</span>
         </button>
+        <button id="orientationToggleBtn" onclick="toggleDisplayOrientation()"
+          class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border transition-all border-[#F36E21] text-[#F36E21]">
+          <i class="fa-solid fa-mobile-screen-button text-xs"></i>
+          <span class="uppercase whitespace-nowrap hidden sm:inline">Portrait</span>
+        </button>
         <button onclick="testDisplaySign()"
           class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-[#F36E21] text-[#F36E21] hover:bg-[#F36E21] hover:text-white transition-all">
           <i class="fa-solid fa-desktop text-xs"></i>
@@ -158,6 +163,7 @@ window.addEventListener('beforeinstallprompt', function(e) {
 <script src="script.js?v=4"></script>
 <script src="details.js?v=3"></script>
 <script>
+  document.addEventListener('DOMContentLoaded', loadDisplayOrientation);
   // Show clone footer only for admins
   const detailsFooter = document.getElementById('details-footer');
   if (detailsFooter && localStorage.getItem('userRole') === 'admin') {
