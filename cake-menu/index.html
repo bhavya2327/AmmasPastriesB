@@ -2,37 +2,140 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Waffle Menu</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="style.css" rel="stylesheet">
     <link href="font/stylesheet.css" rel="stylesheet">
     <style>
-        .orientation-portrait {
-            width: 100vw;
-            height: 100vh;
-            margin: auto;
+        * { box-sizing: border-box; }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #f3f4f6;
         }
-        .orientation-landscape {
+
+        #main-section {
             width: 100vw;
-            height: 100vh;
-            margin: auto;
-        }
-        body {
+            height: 100dvh; /* dynamic viewport height — handles mobile browser chrome */
             display: flex;
-            background-color: #f3f4f6;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #menu-inner {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+            padding: 2vh;
+        }
+
+        #menu-title {
+            color: #BE336C;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-weight: 900;
+            font-family: sans-serif;
+            flex-shrink: 0;
+            margin-bottom: 1.5vh;
+        }
+
+        #pink-box {
+            background: #BE336C;
+            border-radius: 2vh;
+            flex: 1;
+            min-height: 0;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #pink-box > img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.1;
+            border-radius: 2vh;
+            pointer-events: none;
+        }
+
+        #waffle-container {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            padding: 2vh;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        #waffle-grid {
+            flex: 1;
+            min-height: 0;
+            display: grid;
+            overflow: hidden;
+            color: white;
+        }
+
+        .waffle-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        .waffle-name {
+            font-weight: 700;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .waffle-desc {
+            color: rgba(255,255,255,0.85);
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            opacity: 0.8;
+        }
+
+        .waffle-price {
+            font-weight: 700;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .border-dashed-col {
+            border-right: 1px dashed rgba(255,255,255,0.4);
+        }
+
+        .border-dashed-row {
+            border-bottom: 1px dashed rgba(255,255,255,0.4);
         }
     </style>
 </head>
-<body class="h-screen w-screen overflow-hidden bg-gray-100">
-   <section id="main-section" class="h-full w-full shadow-2xl">
-    <div class="relative w-full h-full bg-white flex flex-col">
-        <div class="w-full h-full p-[2vh] sm:p-[4vh] relative flex flex-col justify-start">
-            <h1 class="text-[#BE336C] text-center uppercase tracking-widest font-extrabold text-[4vh] sm:text-[5vh] mt-[2vh] mb-[2vh] shrink-0 font-sans">MENU</h1>
-            <div class="rounded-[2vh] bg-[#BE336C] relative flex-1 min-h-0 flex flex-col overflow-hidden">
-                <img src="images/ice1.png" class="opacity-10 absolute w-full h-full rounded-[2vh] object-cover top-0 pointer-events-none">
-                <div id="waffle-container" class="text-white flex-1 min-h-0 relative flex flex-col p-[2vh]">
-                    <!-- Waffles will be loaded here dynamically -->
+<body>
+   <section id="main-section">
+    <div style="position:relative; width:100%; height:100%; background:white; display:flex; flex-direction:column;">
+        <div id="menu-inner">
+            <h1 id="menu-title">MENU</h1>
+            <div id="pink-box">
+                <img src="images/ice1.png" alt="">
+                <div id="waffle-container">
+                    <div id="waffle-grid"></div>
                 </div>
             </div>
         </div>
@@ -40,123 +143,153 @@
    </section>
 
    <script>
-    async function loadWaffles() {
-        try {
-            // Extract branch from URL query params
-            const params = new URLSearchParams(window.location.search);
-            const branch = params.get('branch') || '';
-            
-            // We use absolute path to the backend API running on the same domain
-            // or relative if served through the same server. Since this HTML is served
-            // at /cake-menu/ we can reach the api at /api/waffles
-            let API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:3000' : 'https://4o62k0vv38.execute-api.ap-south-1.amazonaws.com';
-            
-            let apiUrl = `${API_BASE}/api/waffles?branch=${encodeURIComponent(branch)}`;
-            
-            const res = await fetch(apiUrl);
-            if (!res.ok) throw new Error('Network response was not ok');
-            const waffles = await res.json();
-            
-            let orientation = 'portrait';
-            try {
-                const configRes = await fetch(`${API_BASE}/api/waffles/config?branch=${encodeURIComponent(branch)}`);
-                if (configRes.ok) {
-                    const config = await configRes.json();
-                    orientation = config.orientation || 'portrait';
-                }
-            } catch(e) { console.error('Config fetch failed', e); }
-            
-            const section = document.getElementById('main-section');
-            if (orientation === 'landscape') {
-                section.className = 'orientation-landscape';
-                document.title = 'Waffle Menu - TV Landscape';
+    let cachedWaffles = [];
+    let lastOrientation = null;
+
+    // Always detect orientation from the actual device screen
+    function getOrientation() {
+        // Use screen dimensions — most reliable cross-device method
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        return w > h ? 'landscape' : 'portrait';
+    }
+
+    function getFontSizes(orientation, numRows, cols) {
+        if (orientation === 'landscape') {
+            // In landscape: shorter screen, need smaller fonts
+            if (numRows > 9 || cols === 4) {
+                return { name: '1.5vh', desc: '1.1vh', price: '1.5vh', padding: '0.6vh 1vh' };
+            } else if (numRows > 6) {
+                return { name: '1.8vh', desc: '1.2vh', price: '1.8vh', padding: '0.8vh 1.2vh' };
             } else {
-                section.className = 'orientation-portrait';
-                document.title = 'Waffle Menu - TV Portrait';
+                return { name: '2.2vh', desc: '1.4vh', price: '2.2vh', padding: '1vh 1.5vh' };
             }
-            
-            const container = document.getElementById('waffle-container');
-            
-            container.innerHTML = '';
-            
-            const gridDiv = document.createElement('div');
-            
-            // In landscape, we have much less vertical height, so dynamically calculate columns based on items
-            // to ensure we don't end up with too many rows.
-            let cols = 2;
-            if (orientation === 'landscape') {
-                cols = waffles.length > 24 ? 4 : 3;
+        } else {
+            // Portrait — taller screen, can use slightly bigger fonts per row
+            if (numRows > 12) {
+                return { name: '1.3vh', desc: '0.9vh', price: '1.3vh', padding: '0.5vh 1vh' };
+            } else if (numRows > 8) {
+                return { name: '1.5vh', desc: '1vh', price: '1.5vh', padding: '0.7vh 1vh' };
+            } else {
+                return { name: '1.8vh', desc: '1.2vh', price: '1.8vh', padding: '1vh 1.2vh' };
             }
-            const numRows = Math.ceil(waffles.length / cols);
-            const gridColsClass = cols === 4 ? 'grid-cols-4' : (cols === 3 ? 'grid-cols-3' : 'grid-cols-2');
-            gridDiv.className = `grid ${gridColsClass} flex-1 min-h-0 w-full gap-x-[2vh] z-10`;
-            gridDiv.style.gridTemplateRows = `repeat(${numRows}, minmax(0, 1fr))`;
-            
-            waffles.forEach((w, index) => {
-                const descHtml = w.description.replace(/\\n/g, '<br>');
-                const colIndex = index % cols;
-                const isRightMost = colIndex === cols - 1;
-                
-                let borderClasses = isRightMost ? 'pl-[1.5vh]' : 'border-r border-dashed border-white/40 pr-[1.5vh]';
-                if (colIndex > 0 && !isRightMost) borderClasses += ' pl-[1.5vh]';
-                
-                // Only add bottom border if not in the last row
-                const isLastRow = Math.floor(index / cols) === numRows - 1;
-                const bottomBorder = isLastRow ? '' : 'border-b border-dashed border-white/40';
-                
-                const itemDiv = document.createElement('div');
-                itemDiv.className = `flex justify-between items-center overflow-hidden ${borderClasses} ${bottomBorder}`;
-                
-                const priceNum = w.price.replace(/[^0-9.]/g, '');
-                
-                // Use vw/vh based on orientation for better responsiveness
-                let nameTextClass, descTextClass, priceTextClass;
-                if (orientation === 'landscape') {
-                    // if lots of rows, make font smaller to fit
-                    if (numRows > 8) {
-                        nameTextClass = 'text-[1.8vh] sm:text-[2.2vh]';
-                        descTextClass = 'text-[1.2vh] sm:text-[1.4vh]';
-                        priceTextClass = 'text-[1.8vh] sm:text-[2.2vh]';
-                    } else {
-                        nameTextClass = 'text-[2.5vh] sm:text-[3vh]';
-                        descTextClass = 'text-[1.5vh] sm:text-[1.8vh]';
-                        priceTextClass = 'text-[2.5vh] sm:text-[3vh]';
-                    }
-                } else {
-                    nameTextClass = 'text-[1.4vh] sm:text-[1.8vh]';
-                    descTextClass = 'text-[1vh] sm:text-[1.2vh]';
-                    priceTextClass = 'text-[1.6vh] sm:text-[2vh]';
-                }
-                
-                itemDiv.innerHTML = `
-                    <div class="flex-1 pr-[1vh] min-w-0 flex flex-col justify-center h-full">
-                        <h6 class="name ${nameTextClass} font-bold leading-tight truncate">${w.name}</h6>
-                        <p class="ingredients text-white/90 ${descTextClass} leading-tight truncate mt-[2px] opacity-80 block">${descHtml}</p>
-                    </div>
-                    <div class="pl-[1vh] shrink-0 flex items-center h-full">
-                        <h5 class="price ${priceTextClass} font-bold">₹${priceNum}</h5>
-                    </div>
-                `;
-                gridDiv.appendChild(itemDiv);
-            });
-            
-            container.appendChild(gridDiv);
-            
-        } catch (error) {
-            console.error('Error fetching waffles:', error);
-            // Fallback could be implemented here
         }
     }
-    
+
+    function renderWaffles(waffles) {
+        const orientation = getOrientation();
+        lastOrientation = orientation;
+
+        // Update title
+        document.title = orientation === 'landscape' ? 'Waffle Menu - TV Landscape' : 'Waffle Menu - TV Portrait';
+
+        // Update menu-title font size based on orientation
+        const titleEl = document.getElementById('menu-title');
+        titleEl.style.fontSize = orientation === 'landscape' ? '3.5vh' : '4.5vh';
+        titleEl.style.marginTop = orientation === 'landscape' ? '0.5vh' : '1vh';
+
+        const grid = document.getElementById('waffle-grid');
+        grid.innerHTML = '';
+
+        if (!waffles || waffles.length === 0) {
+            grid.innerHTML = '<p style="color:white;text-align:center;padding:2vh;">No menu items found.</p>';
+            return;
+        }
+
+        // Determine columns
+        let cols;
+        if (orientation === 'landscape') {
+            cols = waffles.length > 24 ? 4 : 3;
+        } else {
+            cols = 2;
+        }
+
+        const numRows = Math.ceil(waffles.length / cols);
+        const fonts = getFontSizes(orientation, numRows, cols);
+
+        // Set up CSS grid
+        grid.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
+        grid.style.gridTemplateRows = `repeat(${numRows}, minmax(0, 1fr))`;
+        grid.style.gap = '0';
+
+        waffles.forEach((w, index) => {
+            const descHtml = (w.description || '').replace(/\\n/g, '<br>');
+            const priceNum = (w.price || '').replace(/[^0-9.]/g, '');
+
+            const colIndex = index % cols;
+            const rowIndex = Math.floor(index / cols);
+            const isLastCol = colIndex === cols - 1;
+            const isLastRow = rowIndex === numRows - 1;
+
+            const item = document.createElement('div');
+            item.className = 'waffle-item';
+
+            let borderStyle = '';
+            if (!isLastCol) borderStyle += 'border-right: 1px dashed rgba(255,255,255,0.4);';
+            if (!isLastRow) borderStyle += 'border-bottom: 1px dashed rgba(255,255,255,0.4);';
+
+            item.style.cssText = `
+                padding: ${fonts.padding};
+                ${borderStyle}
+                min-height: 0;
+                overflow: hidden;
+            `;
+
+            item.innerHTML = `
+                <div style="flex:1; min-width:0; padding-right:0.8vh; display:flex; flex-direction:column; justify-content:center;">
+                    <div class="waffle-name" style="font-size:${fonts.name};">${w.name}</div>
+                    <div class="waffle-desc" style="font-size:${fonts.desc};">${descHtml}</div>
+                </div>
+                <div style="flex-shrink:0; padding-left:0.5vh;">
+                    <div class="waffle-price" style="font-size:${fonts.price};">₹${priceNum}</div>
+                </div>
+            `;
+
+            grid.appendChild(item);
+        });
+    }
+
+    async function loadWaffles() {
+        try {
+            const params = new URLSearchParams(window.location.search);
+            const branch = params.get('branch') || '';
+
+            const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+                ? 'http://localhost:3000'
+                : 'https://4o62k0vv38.execute-api.ap-south-1.amazonaws.com';
+
+            const res = await fetch(`${API_BASE}/api/waffles?branch=${encodeURIComponent(branch)}`);
+            if (!res.ok) throw new Error('Network response was not ok');
+            cachedWaffles = await res.json();
+
+            renderWaffles(cachedWaffles);
+        } catch (error) {
+            console.error('Error fetching waffles:', error);
+        }
+    }
+
+    // Re-render on orientation change without refetching data
+    function handleOrientationChange() {
+        const newOrientation = getOrientation();
+        if (newOrientation !== lastOrientation && cachedWaffles.length > 0) {
+            renderWaffles(cachedWaffles);
+        }
+    }
+
+    // Listen to both orientationchange and resize for maximum compatibility
+    window.addEventListener('orientationchange', () => {
+        // Small delay to let browser finish the rotation transition
+        setTimeout(handleOrientationChange, 150);
+    });
+    window.addEventListener('resize', () => {
+        setTimeout(handleOrientationChange, 100);
+    });
+
     // Load once DOM is ready
     document.addEventListener('DOMContentLoaded', loadWaffles);
-    
+
     // Auto refresh every 30 seconds to keep display sign updated
     setInterval(loadWaffles, 30000);
    </script>
-        </div>
-    </div>
-   </section>
-
 </body>
 </html>
