@@ -108,24 +108,6 @@
         .animate-spin {
             animation: spinSlow 2s linear infinite;
         }
-        /* Auto-orientation layout adjustments */
-        body[data-orientation="landscape"] #displayLogo {
-            width: 56px !important;
-        }
-        body[data-orientation="landscape"] #homeMenuCard {
-            max-height: 60vh;
-            padding: 12px;
-        }
-        body[data-orientation="landscape"] #announcementMarqueeBanner {
-            bottom: 8px;
-            padding: 6px 0;
-        }
-        body[data-orientation="landscape"] #announcementMarqueeBanner #marqueeContainer {
-            font-size: 18px !important;
-        }
-        body[data-orientation="landscape"] .fade-in-up {
-            padding-top: 8px;
-        }
     </style>
 </head>
 <body class="overflow-hidden">
@@ -964,17 +946,6 @@
                 }, 1500);
             }
         });
-
-        // --- AUTO ORIENTATION DETECTION ---
-        function applyOrientation() {
-            const isLandscape = window.innerWidth > window.innerHeight;
-            document.body.dataset.orientation = isLandscape ? 'landscape' : 'portrait';
-        }
-        // Apply on load
-        applyOrientation();
-        // Re-apply when device rotates
-        window.addEventListener('orientationchange', () => setTimeout(applyOrientation, 150));
-        window.addEventListener('resize', () => setTimeout(applyOrientation, 100));
     </script>
     <script src="install-banner.js"></script>
 </body>

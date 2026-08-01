@@ -315,51 +315,6 @@ function testDisplaySign() {
     }
 }
 
-// --- DISPLAY ORIENTATION TOGGLE ---
-// Shared between image.html (admin) and media.html (branch)
-
-let _currentDisplayOrientation = 'portrait';
-
-async function loadDisplayOrientation() {
-    const branch = getBranchFromUrl() || 'global';
-    const btn = document.getElementById('orientationToggleBtn');
-    if (!btn) return;
-    try {
-        const res = await fetch(`${API_BASE}/api/waffles/config?branch=${encodeURIComponent(branch)}`);
-        if (res.ok) {
-            const cfg = await res.json();
-            _currentDisplayOrientation = cfg.orientation || 'portrait';
-        }
-    } catch(e) { /* keep default */ }
-    _updateOrientationBtn();
-}
-
-function _updateOrientationBtn() {
-    const btn = document.getElementById('orientationToggleBtn');
-    if (!btn) return;
-    const isLandscape = _currentDisplayOrientation === 'landscape';
-    btn.title = isLandscape ? 'Switch to Portrait' : 'Switch to Landscape';
-    btn.innerHTML = isLandscape
-        ? `<i class="fa-solid fa-mobile-screen-button rotate-90 text-xs"></i><span class="uppercase whitespace-nowrap hidden sm:inline">Landscape</span>`
-        : `<i class="fa-solid fa-mobile-screen-button text-xs"></i><span class="uppercase whitespace-nowrap hidden sm:inline">Portrait</span>`;
-    btn.classList.toggle('bg-[#F36E21]', isLandscape);
-    btn.classList.toggle('text-white', isLandscape);
-    btn.classList.toggle('border-[#F36E21]', !isLandscape);
-    btn.classList.toggle('text-[#F36E21]', !isLandscape);
-}
-
-async function toggleDisplayOrientation() {
-    const branch = getBranchFromUrl() || 'global';
-    _currentDisplayOrientation = _currentDisplayOrientation === 'landscape' ? 'portrait' : 'landscape';
-    _updateOrientationBtn();
-    try {
-        await fetch(`${API_BASE}/api/branches/${encodeURIComponent(branch)}/waffles/config`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ orientation: _currentDisplayOrientation })
-        });
-    } catch(e) { console.error('Failed to save orientation', e); }
-}
 
 
 // Auto-preload current page manifest on load so prompt is ready before user clicks Download
