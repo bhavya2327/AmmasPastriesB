@@ -57,7 +57,7 @@
         }
 
         #pink-box {
-            background: #BE336C;
+            background: #adebb2;
             border-radius: 2vh;
             flex: 1;
             min-height: 0;
@@ -94,7 +94,7 @@
             min-height: 0;
             display: grid;
             overflow: hidden;
-            color: white;
+            color: #000;
         }
 
         .waffle-item {
@@ -114,7 +114,7 @@
         }
 
         .waffle-desc {
-            color: rgba(255,255,255,0.85);
+            color: rgba(0,0,0,0.85);
             line-height: 1.2;
             white-space: nowrap;
             overflow: hidden;
@@ -197,7 +197,7 @@
         grid.innerHTML = '';
 
         if (!waffles || waffles.length === 0) {
-            grid.innerHTML = '<p style="color:white;text-align:center;padding:2vh;">No menu items found.</p>';
+            grid.innerHTML = '<p style="color:#000;text-align:center;padding:2vh;">No menu items found.</p>';
             return;
         }
 
@@ -245,8 +245,8 @@
             item.className = 'waffle-item';
 
             let borderStyle = '';
-            if (!isLastCol) borderStyle += 'border-right: 1px dashed rgba(255,255,255,0.4);';
-            if (!isLastRow) borderStyle += 'border-bottom: 1px dashed rgba(255,255,255,0.4);';
+            if (!isLastCol) borderStyle += 'border-right: 1px dashed rgba(0,0,0,0.4);';
+            if (!isLastRow) borderStyle += 'border-bottom: 1px dashed rgba(0,0,0,0.4);';
 
             item.style.cssText = `padding: ${pad}; ${borderStyle} min-height: 0; overflow: hidden;`;
 
