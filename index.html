@@ -112,6 +112,13 @@
             }
         }
 
+        /* Adjust logo position for portrait mode */
+        body[data-orientation="portrait"] #logo-header {
+            padding-left: 1.5rem !important;
+            padding-right: 1.5rem !important;
+            padding-top: 1.5rem !important;
+        }
+
         #preloader.hide {
             opacity: 0;
             visibility: hidden;
@@ -147,7 +154,7 @@
         </div>
     </div>
     <section id="main-section" class="relative h-[100dvh] w-full flex items-center justify-center overflow-hidden">
-        <div class="flex absolute top-0 left-0 z-20 w-full justify-between px-8 pt-8 md:px-16 md:pt-16 items-start">
+        <div id="logo-header" class="flex absolute top-0 left-0 z-20 w-full justify-between px-8 pt-8 md:px-16 md:pt-16 items-start">
             <div class="fade-in-up flex items-center gap-4" style="animation-delay: 0.5s;">
                 <img id="displayLogo" src="images/Ammas%20logo.svg" alt="Amma's Pastries" class="lg:w-[112px] sm:w-[92px] w-[72px] object-contain transition-opacity duration-300">
                 <!-- Fullscreen Toggle Switch -->
