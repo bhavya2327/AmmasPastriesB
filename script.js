@@ -299,18 +299,21 @@ function testDisplaySign() {
     const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in';
     const branch = getBranchFromUrl();
+    const tvOrientation = document.getElementById('tvOrientation');
+    const orientationParam = tvOrientation ? '&orientation=' + encodeURIComponent(tvOrientation.value) : '';
+    
     if (branch) {
         const slug = branch.toLowerCase().trim().replace(/\s+/g, '-');
         if (isCleanActive) {
-            window.open('/ammas-pastries/' + slug + '?preview=true', '_blank');
+            window.open('/ammas-pastries/' + slug + '?preview=true' + orientationParam, '_blank');
         } else {
-            window.open('/index.html?branch=' + encodeURIComponent(branch) + '&preview=true', '_blank');
+            window.open('/index.html?branch=' + encodeURIComponent(branch) + '&preview=true' + orientationParam, '_blank');
         }
     } else {
         if (isCleanActive) {
-            window.open('/ammas-pastries?preview=true', '_blank');
+            window.open('/ammas-pastries?preview=true' + (tvOrientation ? '&orientation=' + encodeURIComponent(tvOrientation.value) : ''), '_blank');
         } else {
-            window.open('/index.html?preview=true', '_blank');
+            window.open('/index.html?preview=true' + orientationParam, '_blank');
         }
     }
 }

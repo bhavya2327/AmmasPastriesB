@@ -97,6 +97,21 @@
             height: 100%;
             overflow: hidden;
         }
+
+        body[data-orientation="portrait"] {
+            background-color: #222;
+        }
+
+        /* If portrait mode is forced, but the screen is wide (landscape laptop), constrain width to look like a portrait screen */
+        @media (min-aspect-ratio: 1/1) {
+            body[data-orientation="portrait"] #main-section {
+                width: 56.25vh;
+                /* 9:16 portrait aspect ratio based on screen height */
+                box-shadow: 0 0 30px rgba(0, 0, 0, 0.15);
+                margin: 0 auto;
+            }
+        }
+
         #preloader.hide {
             opacity: 0;
             visibility: hidden;
@@ -131,7 +146,7 @@
             </div>
         </div>
     </div>
-    <section class="relative h-[100dvh] w-full flex items-center justify-center overflow-hidden">
+    <section id="main-section" class="relative h-[100dvh] w-full flex items-center justify-center overflow-hidden">
         <div class="flex absolute top-0 left-0 z-20 w-full justify-between px-8 pt-8 md:px-16 md:pt-16 items-start">
             <div class="fade-in-up flex items-center gap-4" style="animation-delay: 0.5s;">
                 <img id="displayLogo" src="images/Ammas%20logo.svg" alt="Amma's Pastries" class="lg:w-[112px] sm:w-[92px] w-[72px] object-contain transition-opacity duration-300">
@@ -946,6 +961,13 @@
                 }, 1500);
             }
         });
+    </script>
+    <script>
+        (function() {
+            const params = new URLSearchParams(window.location.search);
+            const orientation = params.get('orientation') || 'landscape';
+            document.body.setAttribute('data-orientation', orientation);
+        })();
     </script>
     <script src="install-banner.js"></script>
 </body>
