@@ -137,7 +137,7 @@
   async function loadWaffles() {
     try {
       const branchQuery = getBranchFromUrl() ? '?branch=' + encodeURIComponent(getBranchFromUrl()) : '';
-      const res = await fetch('/api/waffles' + branchQuery);
+      const res = await fetch(API_BASE + '/api/waffles' + branchQuery);
       waffles = await res.json();
       renderWaffles();
     } catch (err) {
@@ -215,7 +215,7 @@
       isVeg: document.getElementById('waffleIsVeg').checked
     };
 
-    const url = id ? `/api/branches/${getBranchFromUrl()}/waffles/${id}` : `/api/branches/${getBranchFromUrl()}/waffles`;
+    const url = id ? `${API_BASE}/api/branches/${getBranchFromUrl()}/waffles/${id}` : `${API_BASE}/api/branches/${getBranchFromUrl()}/waffles`;
     const method = id ? 'PUT' : 'POST';
 
     try {
@@ -259,7 +259,7 @@
     btn.disabled = true;
     
     try {
-      const res = await fetch(`/api/branches/${getBranchFromUrl()}/waffles/${id}`, {
+      const res = await fetch(`${API_BASE}/api/branches/${getBranchFromUrl()}/waffles/${id}`, {
         method: 'DELETE'
       });
       if (res.ok) {
@@ -281,7 +281,7 @@
   async function loadConfig() {
     try {
       const branchQuery = getBranchFromUrl() ? '?branch=' + encodeURIComponent(getBranchFromUrl()) : '';
-      const res = await fetch('/api/waffles/config' + branchQuery);
+      const res = await fetch(API_BASE + '/api/waffles/config' + branchQuery);
       if (res.ok) {
         const config = await res.json();
         document.getElementById('tvOrientation').value = config.orientation || 'portrait';
@@ -295,7 +295,7 @@
     const orientation = document.getElementById('tvOrientation').value;
     const payload = { orientation };
     try {
-      await fetch(`/api/branches/${getBranchFromUrl()}/waffles/config`, {
+      await fetch(`${API_BASE}/api/branches/${getBranchFromUrl()}/waffles/config`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ orientation })
@@ -322,7 +322,7 @@
 
   async function loadPreviewBranches() {
     try {
-      const res = await fetch('/api/branches');
+      const res = await fetch(API_BASE + '/api/branches');
       const branches = await res.json();
       const container = document.getElementById('wafflePreviewBranches');
       container.innerHTML = '';
