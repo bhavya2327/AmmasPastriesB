@@ -143,47 +143,38 @@
    </section>
 
    <script>
-    let cachedWaffles = [];
-    let lastOrientation = null;
+    async function loadWaffles() {
+        try {
+            const params = new URLSearchParams(window.location.search);
+            const branch = params.get('branch') || '';
 
-    // Always detect orientation from the actual device screen
-    function getOrientation() {
-        // Use screen dimensions — most reliable cross-device method
-        const w = window.innerWidth;
-        const h = window.innerHeight;
-        return w > h ? 'landscape' : 'portrait';
-    }
+            const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+                ? 'http://localhost:3000'
+                : 'https://4o62k0vv38.execute-api.ap-south-1.amazonaws.com';
 
-    function getFontSizes(orientation, numRows, cols) {
-        if (orientation === 'landscape') {
-            // In landscape: shorter screen, need smaller fonts
-            if (numRows > 9 || cols === 4) {
-                return { name: '1.5vh', desc: '1.1vh', price: '1.5vh', padding: '0.6vh 1vh' };
-            } else if (numRows > 6) {
-                return { name: '1.8vh', desc: '1.2vh', price: '1.8vh', padding: '0.8vh 1.2vh' };
-            } else {
-                return { name: '2.2vh', desc: '1.4vh', price: '2.2vh', padding: '1vh 1.5vh' };
-            }
-        } else {
-            // Portrait — taller screen, can use slightly bigger fonts per row
-            if (numRows > 12) {
-                return { name: '1.3vh', desc: '0.9vh', price: '1.3vh', padding: '0.5vh 1vh' };
-            } else if (numRows > 8) {
-                return { name: '1.5vh', desc: '1vh', price: '1.5vh', padding: '0.7vh 1vh' };
-            } else {
-                return { name: '1.8vh', desc: '1.2vh', price: '1.8vh', padding: '1vh 1.2vh' };
-            }
+            const res = await fetch(`${API_BASE}/api/waffles?branch=${encodeURIComponent(branch)}`);
+            if (!res.ok) throw new Error('Network response was not ok');
+            const waffles = await res.json();
+
+            // Fetch orientation from API config
+            let orientation = 'portrait';
+            try {
+                const configRes = await fetch(`${API_BASE}/api/waffles/config?branch=${encodeURIComponent(branch)}`);
+                if (configRes.ok) {
+                    const config = await configRes.json();
+                    orientation = config.orientation || 'portrait';
+                }
+            } catch(e) { /* keep default */ }
+
+            renderWaffles(waffles, orientation);
+        } catch (error) {
+            console.error('Error fetching waffles:', error);
         }
     }
 
-    function renderWaffles(waffles) {
-        const orientation = getOrientation();
-        lastOrientation = orientation;
-
-        // Update title
+    function renderWaffles(waffles, orientation) {
         document.title = orientation === 'landscape' ? 'Waffle Menu - TV Landscape' : 'Waffle Menu - TV Portrait';
 
-        // Update menu-title font size based on orientation
         const titleEl = document.getElementById('menu-title');
         titleEl.style.fontSize = orientation === 'landscape' ? '3.5vh' : '4.5vh';
         titleEl.style.marginTop = orientation === 'landscape' ? '0.5vh' : '1vh';
@@ -196,18 +187,33 @@
             return;
         }
 
-        // Determine columns
-        let cols;
-        if (orientation === 'landscape') {
-            cols = waffles.length > 24 ? 4 : 3;
-        } else {
-            cols = 2;
-        }
+        // Determine columns from orientation
+        const cols = orientation === 'landscape'
+            ? (waffles.length > 24 ? 4 : 3)
+            : 2;
 
         const numRows = Math.ceil(waffles.length / cols);
-        const fonts = getFontSizes(orientation, numRows, cols);
 
-        // Set up CSS grid
+        // Font sizes based on orientation and row count
+        let nameSz, descSz, priceSz, pad;
+        if (orientation === 'landscape') {
+            if (numRows > 9 || cols === 4) {
+                nameSz = '1.5vh'; descSz = '1.1vh'; priceSz = '1.5vh'; pad = '0.6vh 1vh';
+            } else if (numRows > 6) {
+                nameSz = '1.8vh'; descSz = '1.2vh'; priceSz = '1.8vh'; pad = '0.8vh 1.2vh';
+            } else {
+                nameSz = '2.2vh'; descSz = '1.4vh'; priceSz = '2.2vh'; pad = '1vh 1.5vh';
+            }
+        } else {
+            if (numRows > 12) {
+                nameSz = '1.3vh'; descSz = '0.9vh'; priceSz = '1.3vh'; pad = '0.5vh 1vh';
+            } else if (numRows > 8) {
+                nameSz = '1.5vh'; descSz = '1vh'; priceSz = '1.5vh'; pad = '0.7vh 1vh';
+            } else {
+                nameSz = '1.8vh'; descSz = '1.2vh'; priceSz = '1.8vh'; pad = '1vh 1.2vh';
+            }
+        }
+
         grid.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
         grid.style.gridTemplateRows = `repeat(${numRows}, minmax(0, 1fr))`;
         grid.style.gap = '0';
@@ -228,62 +234,21 @@
             if (!isLastCol) borderStyle += 'border-right: 1px dashed rgba(255,255,255,0.4);';
             if (!isLastRow) borderStyle += 'border-bottom: 1px dashed rgba(255,255,255,0.4);';
 
-            item.style.cssText = `
-                padding: ${fonts.padding};
-                ${borderStyle}
-                min-height: 0;
-                overflow: hidden;
-            `;
+            item.style.cssText = `padding: ${pad}; ${borderStyle} min-height: 0; overflow: hidden;`;
 
             item.innerHTML = `
                 <div style="flex:1; min-width:0; padding-right:0.8vh; display:flex; flex-direction:column; justify-content:center;">
-                    <div class="waffle-name" style="font-size:${fonts.name};">${w.name}</div>
-                    <div class="waffle-desc" style="font-size:${fonts.desc};">${descHtml}</div>
+                    <div class="waffle-name" style="font-size:${nameSz};">${w.name}</div>
+                    <div class="waffle-desc" style="font-size:${descSz};">${descHtml}</div>
                 </div>
                 <div style="flex-shrink:0; padding-left:0.5vh;">
-                    <div class="waffle-price" style="font-size:${fonts.price};">₹${priceNum}</div>
+                    <div class="waffle-price" style="font-size:${priceSz};">₹${priceNum}</div>
                 </div>
             `;
 
             grid.appendChild(item);
         });
     }
-
-    async function loadWaffles() {
-        try {
-            const params = new URLSearchParams(window.location.search);
-            const branch = params.get('branch') || '';
-
-            const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-                ? 'http://localhost:3000'
-                : 'https://4o62k0vv38.execute-api.ap-south-1.amazonaws.com';
-
-            const res = await fetch(`${API_BASE}/api/waffles?branch=${encodeURIComponent(branch)}`);
-            if (!res.ok) throw new Error('Network response was not ok');
-            cachedWaffles = await res.json();
-
-            renderWaffles(cachedWaffles);
-        } catch (error) {
-            console.error('Error fetching waffles:', error);
-        }
-    }
-
-    // Re-render on orientation change without refetching data
-    function handleOrientationChange() {
-        const newOrientation = getOrientation();
-        if (newOrientation !== lastOrientation && cachedWaffles.length > 0) {
-            renderWaffles(cachedWaffles);
-        }
-    }
-
-    // Listen to both orientationchange and resize for maximum compatibility
-    window.addEventListener('orientationchange', () => {
-        // Small delay to let browser finish the rotation transition
-        setTimeout(handleOrientationChange, 150);
-    });
-    window.addEventListener('resize', () => {
-        setTimeout(handleOrientationChange, 100);
-    });
 
     // Load once DOM is ready
     document.addEventListener('DOMContentLoaded', loadWaffles);
