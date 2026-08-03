@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -8,9 +9,12 @@
     <link href="style.css" rel="stylesheet">
     <link href="font/stylesheet.css" rel="stylesheet">
     <style>
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
-        html, body {
+        html,
+        body {
             width: 100%;
             height: 100%;
             margin: 0;
@@ -21,7 +25,8 @@
 
         #main-section {
             width: 100vw;
-            height: 100dvh; /* dynamic viewport height — handles mobile browser chrome */
+            height: 100dvh;
+            /* dynamic viewport height — handles mobile browser chrome */
             display: flex;
             flex-direction: column;
             overflow: hidden;
@@ -32,8 +37,9 @@
         /* If portrait mode is forced, but the screen is wide (landscape laptop), constrain width to look like a portrait screen */
         @media (min-aspect-ratio: 1/1) {
             body[data-orientation="portrait"] #main-section {
-                width: 56.25vh; /* 9:16 portrait aspect ratio based on screen height */
-                box-shadow: 0 0 30px rgba(0,0,0,0.15);
+                width: 56.25vh;
+                /* 9:16 portrait aspect ratio based on screen height */
+                box-shadow: 0 0 30px rgba(0, 0, 0, 0.15);
             }
         }
 
@@ -57,7 +63,7 @@
         }
 
         #pink-box {
-            background: #8cac9f;
+            background: #8caea0;
             border-radius: 2vh;
             flex: 1;
             min-height: 0;
@@ -67,7 +73,7 @@
             overflow: hidden;
         }
 
-        #pink-box > img {
+        #pink-box>img {
             position: absolute;
             inset: 0;
             width: 100%;
@@ -114,7 +120,7 @@
         }
 
         .waffle-desc {
-            color: rgba(0,0,0,0.85);
+            color: rgba(0, 0, 0, 0.85);
             line-height: 1.2;
             white-space: nowrap;
             overflow: hidden;
@@ -129,128 +135,129 @@
         }
 
         .border-dashed-col {
-            border-right: 1px dashed rgba(255,255,255,0.4);
+            border-right: 1px dashed rgba(0, 0, 0, 0.4);
         }
 
         .border-dashed-row {
-            border-bottom: 1px dashed rgba(255,255,255,0.4);
+            border-bottom: 1px dashed rgba(0, 0, 0, 0.4);
         }
     </style>
 </head>
+
 <body>
-   <section id="main-section">
-    <div style="position:relative; width:100%; height:100%; background:white; display:flex; flex-direction:column;">
-        <div id="menu-inner">
-            <h1 id="menu-title">MENU</h1>
-            <div id="pink-box">
-                <img src="images/ice1.png" alt="">
-                <div id="waffle-container">
-                    <div id="waffle-grid"></div>
+    <section id="main-section">
+        <div style="position:relative; width:100%; height:100%; background:white; display:flex; flex-direction:column;">
+            <div id="menu-inner">
+                <h1 id="menu-title">MENU</h1>
+                <div id="pink-box">
+                    <img src="images/ice1.png" alt="">
+                    <div id="waffle-container">
+                        <div id="waffle-grid"></div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-   </section>
+    </section>
 
-   <script>
-    async function loadWaffles() {
-        try {
-            const params = new URLSearchParams(window.location.search);
-            const branch = params.get('branch') || '';
+    <script>
+        async function loadWaffles() {
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const branch = params.get('branch') || '';
 
-            const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-                ? 'http://localhost:3000'
-                : 'https://4o62k0vv38.execute-api.ap-south-1.amazonaws.com';
+                const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+                    ? 'http://localhost:3000'
+                    : 'https://4o62k0vv38.execute-api.ap-south-1.amazonaws.com';
 
-            const res = await fetch(`${API_BASE}/api/waffles?branch=${encodeURIComponent(branch)}`);
-            if (!res.ok) throw new Error('Network response was not ok');
-            const waffles = await res.json();
+                const res = await fetch(`${API_BASE}/api/waffles?branch=${encodeURIComponent(branch)}`);
+                if (!res.ok) throw new Error('Network response was not ok');
+                const waffles = await res.json();
 
-            // 1. URL param takes priority (set by Live Preview button)
-            // 2. Fall back to API config saved in the database
-            let orientation = params.get('orientation') || 'portrait';
-            if (!params.get('orientation')) {
-                try {
-                    const configRes = await fetch(`${API_BASE}/api/waffles/config?branch=${encodeURIComponent(branch)}`);
-                    if (configRes.ok) {
-                        const config = await configRes.json();
-                        orientation = config.orientation || 'portrait';
-                    }
-                } catch(e) { /* keep default */ }
+                // 1. URL param takes priority (set by Live Preview button)
+                // 2. Fall back to API config saved in the database
+                let orientation = params.get('orientation') || 'portrait';
+                if (!params.get('orientation')) {
+                    try {
+                        const configRes = await fetch(`${API_BASE}/api/waffles/config?branch=${encodeURIComponent(branch)}`);
+                        if (configRes.ok) {
+                            const config = await configRes.json();
+                            orientation = config.orientation || 'portrait';
+                        }
+                    } catch (e) { /* keep default */ }
+                }
+
+                renderWaffles(waffles, orientation);
+            } catch (error) {
+                console.error('Error fetching waffles:', error);
+            }
+        }
+
+        function renderWaffles(waffles, orientation) {
+            document.title = orientation === 'landscape' ? 'Waffle Menu - TV Landscape' : 'Waffle Menu - TV Portrait';
+            document.body.setAttribute('data-orientation', orientation);
+
+            const titleEl = document.getElementById('menu-title');
+            titleEl.style.fontSize = orientation === 'landscape' ? '3.5vh' : '4.5vh';
+            titleEl.style.marginTop = orientation === 'landscape' ? '0.5vh' : '1vh';
+
+            const grid = document.getElementById('waffle-grid');
+            grid.innerHTML = '';
+
+            if (!waffles || waffles.length === 0) {
+                grid.innerHTML = '<p style="color:#000;text-align:center;padding:2vh;">No menu items found.</p>';
+                return;
             }
 
-            renderWaffles(waffles, orientation);
-        } catch (error) {
-            console.error('Error fetching waffles:', error);
-        }
-    }
+            // Determine columns from orientation
+            const cols = orientation === 'landscape'
+                ? (waffles.length > 24 ? 4 : 3)
+                : 2;
 
-    function renderWaffles(waffles, orientation) {
-        document.title = orientation === 'landscape' ? 'Waffle Menu - TV Landscape' : 'Waffle Menu - TV Portrait';
-        document.body.setAttribute('data-orientation', orientation);
+            const numRows = Math.ceil(waffles.length / cols);
 
-        const titleEl = document.getElementById('menu-title');
-        titleEl.style.fontSize = orientation === 'landscape' ? '3.5vh' : '4.5vh';
-        titleEl.style.marginTop = orientation === 'landscape' ? '0.5vh' : '1vh';
-
-        const grid = document.getElementById('waffle-grid');
-        grid.innerHTML = '';
-
-        if (!waffles || waffles.length === 0) {
-            grid.innerHTML = '<p style="color:#000;text-align:center;padding:2vh;">No menu items found.</p>';
-            return;
-        }
-
-        // Determine columns from orientation
-        const cols = orientation === 'landscape'
-            ? (waffles.length > 24 ? 4 : 3)
-            : 2;
-
-        const numRows = Math.ceil(waffles.length / cols);
-
-        // Font sizes based on orientation and row count
-        let nameSz, descSz, priceSz, pad;
-        if (orientation === 'landscape') {
-            if (numRows > 9 || cols === 4) {
-                nameSz = '1.5vh'; descSz = '1.1vh'; priceSz = '1.5vh'; pad = '0.6vh 1vh';
-            } else if (numRows > 6) {
-                nameSz = '1.8vh'; descSz = '1.2vh'; priceSz = '1.8vh'; pad = '0.8vh 1.2vh';
+            // Font sizes based on orientation and row count
+            let nameSz, descSz, priceSz, pad;
+            if (orientation === 'landscape') {
+                if (numRows > 9 || cols === 4) {
+                    nameSz = '1.5vh'; descSz = '1.1vh'; priceSz = '1.5vh'; pad = '0.6vh 1vh';
+                } else if (numRows > 6) {
+                    nameSz = '1.8vh'; descSz = '1.2vh'; priceSz = '1.8vh'; pad = '0.8vh 1.2vh';
+                } else {
+                    nameSz = '2.2vh'; descSz = '1.4vh'; priceSz = '2.2vh'; pad = '1vh 1.5vh';
+                }
             } else {
-                nameSz = '2.2vh'; descSz = '1.4vh'; priceSz = '2.2vh'; pad = '1vh 1.5vh';
+                if (numRows > 12) {
+                    nameSz = '1.3vh'; descSz = '0.9vh'; priceSz = '1.3vh'; pad = '0.5vh 1vh';
+                } else if (numRows > 8) {
+                    nameSz = '1.5vh'; descSz = '1vh'; priceSz = '1.5vh'; pad = '0.7vh 1vh';
+                } else {
+                    nameSz = '1.8vh'; descSz = '1.2vh'; priceSz = '1.8vh'; pad = '1vh 1.2vh';
+                }
             }
-        } else {
-            if (numRows > 12) {
-                nameSz = '1.3vh'; descSz = '0.9vh'; priceSz = '1.3vh'; pad = '0.5vh 1vh';
-            } else if (numRows > 8) {
-                nameSz = '1.5vh'; descSz = '1vh'; priceSz = '1.5vh'; pad = '0.7vh 1vh';
-            } else {
-                nameSz = '1.8vh'; descSz = '1.2vh'; priceSz = '1.8vh'; pad = '1vh 1.2vh';
-            }
-        }
 
-        grid.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
-        grid.style.gridTemplateRows = `repeat(${numRows}, minmax(0, 1fr))`;
-        grid.style.gap = '0';
+            grid.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
+            grid.style.gridTemplateRows = `repeat(${numRows}, minmax(0, 1fr))`;
+            grid.style.gap = '0';
 
-        waffles.forEach((w, index) => {
-            const descHtml = (w.description || '').replace(/\\n/g, '<br>');
-            const priceNum = (w.price || '').replace(/[^0-9.]/g, '');
+            waffles.forEach((w, index) => {
+                const descHtml = (w.description || '').replace(/\\n/g, '<br>');
+                const priceNum = (w.price || '').replace(/[^0-9.]/g, '');
 
-            const colIndex = index % cols;
-            const rowIndex = Math.floor(index / cols);
-            const isLastCol = colIndex === cols - 1;
-            const isLastRow = rowIndex === numRows - 1;
+                const colIndex = index % cols;
+                const rowIndex = Math.floor(index / cols);
+                const isLastCol = colIndex === cols - 1;
+                const isLastRow = rowIndex === numRows - 1;
 
-            const item = document.createElement('div');
-            item.className = 'waffle-item';
+                const item = document.createElement('div');
+                item.className = 'waffle-item';
 
-            let borderStyle = '';
-            if (!isLastCol) borderStyle += 'border-right: 1px dashed rgba(0,0,0,0.4);';
-            if (!isLastRow) borderStyle += 'border-bottom: 1px dashed rgba(0,0,0,0.4);';
+                let borderStyle = '';
+                if (!isLastCol) borderStyle += 'border-right: 1px dashed rgba(0,0,0,0.4);';
+                if (!isLastRow) borderStyle += 'border-bottom: 1px dashed rgba(0,0,0,0.4);';
 
-            item.style.cssText = `padding: ${pad}; ${borderStyle} min-height: 0; overflow: hidden;`;
+                item.style.cssText = `padding: ${pad}; ${borderStyle} min-height: 0; overflow: hidden;`;
 
-            item.innerHTML = `
+                item.innerHTML = `
                 <div style="flex:1; min-width:0; padding-right:0.8vh; display:flex; flex-direction:column; justify-content:center;">
                     <div class="waffle-name" style="font-size:${nameSz};">${w.name}</div>
                     <div class="waffle-desc" style="font-size:${descSz};">${descHtml}</div>
@@ -260,15 +267,16 @@
                 </div>
             `;
 
-            grid.appendChild(item);
-        });
-    }
+                grid.appendChild(item);
+            });
+        }
 
-    // Load once DOM is ready
-    document.addEventListener('DOMContentLoaded', loadWaffles);
+        // Load once DOM is ready
+        document.addEventListener('DOMContentLoaded', loadWaffles);
 
-    // Auto refresh every 5 seconds — picks up orientation + menu changes quickly
-    setInterval(loadWaffles, 5000);
-   </script>
+        // Auto refresh every 5 seconds — picks up orientation + menu changes quickly
+        setInterval(loadWaffles, 5000);
+    </script>
 </body>
+
 </html>
