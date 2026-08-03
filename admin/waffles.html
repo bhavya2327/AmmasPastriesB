@@ -143,7 +143,7 @@
   async function loadWaffles() {
     try {
       const branchQuery = getBranchFromUrl() ? '?branch=' + encodeURIComponent(getBranchFromUrl()) : '';
-      const res = await fetch('/api/waffles' + branchQuery, {
+      const res = await fetch(API_BASE + '/api/waffles' + branchQuery, {
         headers: { 'Authorization': 'Bearer ' + localStorage.getItem('adminToken') }
       });
       waffles = await res.json();
@@ -225,7 +225,7 @@
 
     const branchQuery = getBranchFromUrl() ? '?branch=' + encodeURIComponent(getBranchFromUrl()) : '';
     const method = id ? 'PUT' : 'POST';
-    const url = (id ? '/api/waffles/' + id : '/api/waffles') + branchQuery;
+    const url = API_BASE + (id ? '/api/waffles/' + id : '/api/waffles') + branchQuery;
 
     try {
       const res = await fetch(url, {
@@ -272,7 +272,7 @@
     
     try {
       const branchQuery = getBranchFromUrl() ? '?branch=' + encodeURIComponent(getBranchFromUrl()) : '';
-      const res = await fetch('/api/waffles/' + id + branchQuery, {
+      const res = await fetch(`${API_BASE}/api/waffles/${id}${branchQuery}`, {
         method: 'DELETE',
         headers: { 'Authorization': 'Bearer ' + localStorage.getItem('adminToken') }
       });
@@ -294,8 +294,10 @@
 
   async function loadConfig() {
     try {
-      const branchQuery = getBranchFromUrl() ? '?branch=' + encodeURIComponent(getBranchFromUrl()) : '';
-      const res = await fetch('/api/waffles/config' + branchQuery);
+      const branch = getBranchFromUrl();
+      const slug = branch ? branch.toLowerCase().trim().replace(/\s+/g, '-') : '';
+      const branchQuery = slug ? '?branch=' + encodeURIComponent(slug) : '';
+      const res = await fetch(API_BASE + '/api/waffles/config' + branchQuery);
       if (res.ok) {
         const config = await res.json();
         document.getElementById('tvOrientation').value = config.orientation || 'portrait';
@@ -308,8 +310,9 @@
   async function updateOrientation() {
     const orientation = document.getElementById('tvOrientation').value;
     try {
-      const branchQuery = getBranchFromUrl() ? '?branch=' + encodeURIComponent(getBranchFromUrl()) : '';
-      await fetch('/api/waffles/config' + branchQuery, {
+      const branch = getBranchFromUrl();
+      const slug = branch ? branch.toLowerCase().trim().replace(/\s+/g, '-') : 'global';
+      await fetch(`${API_BASE}/api/branches/${encodeURIComponent(slug)}/waffles/config`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -317,6 +320,11 @@
         },
         body: JSON.stringify({ orientation })
       });
+      // Brief visual feedback
+      const sel = document.getElementById('tvOrientation');
+      const orig = sel.style.outline;
+      sel.style.outline = '2px solid #22c55e';
+      setTimeout(() => { sel.style.outline = orig; }, 1000);
     } catch (err) {
       console.error(err);
     }
@@ -324,9 +332,10 @@
 
   async function testDisplayWaffles() {
     const branch = getBranchFromUrl();
+    const orientation = document.getElementById('tvOrientation').value;
     if (branch) {
       const slug = branch.toLowerCase().trim().replace(/\s+/g, '-');
-      window.open('/cake-menu/?branch=' + slug, '_blank');
+      window.open('/cake-menu/?branch=' + slug + '&orientation=' + encodeURIComponent(orientation), '_blank');
     } else {
       document.getElementById('wafflePreviewModal').classList.remove('hidden');
       loadPreviewBranches();
@@ -339,7 +348,7 @@
 
   async function loadPreviewBranches() {
     try {
-      const res = await fetch('/api/branches');
+      const res = await fetch(API_BASE + '/api/branches');
       const branches = await res.json();
       const container = document.getElementById('wafflePreviewBranches');
       container.innerHTML = '';
@@ -353,7 +362,8 @@
         btn.className = 'w-full text-left px-4 py-3 bg-gray-50 hover:bg-[#F36E21] hover:text-white rounded-lg transition-colors border border-gray-100 font-medium';
         btn.textContent = b.name;
         btn.onclick = () => {
-          window.open('/cake-menu/?branch=' + slug, '_blank');
+          const orientation = document.getElementById('tvOrientation').value;
+          window.open('/cake-menu/?branch=' + slug + '&orientation=' + encodeURIComponent(orientation), '_blank');
           closeWafflePreviewModal();
         };
         container.appendChild(btn);
