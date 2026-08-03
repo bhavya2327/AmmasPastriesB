@@ -280,7 +280,10 @@
 
   async function loadConfig() {
     try {
-      const branchQuery = getBranchFromUrl() ? '?branch=' + encodeURIComponent(getBranchFromUrl()) : '';
+      // Use slug format to match how cake-menu reads orientation
+      const branch = getBranchFromUrl();
+      const slug = branch ? branch.toLowerCase().trim().replace(/\s+/g, '-') : '';
+      const branchQuery = slug ? '?branch=' + encodeURIComponent(slug) : '';
       const res = await fetch(API_BASE + '/api/waffles/config' + branchQuery);
       if (res.ok) {
         const config = await res.json();
@@ -293,13 +296,22 @@
 
   async function updateOrientation() {
     const orientation = document.getElementById('tvOrientation').value;
-    const payload = { orientation };
+    // Use slug format so the DynamoDB key matches what cake-menu reads
+    const branch = getBranchFromUrl();
+    const slug = branch ? branch.toLowerCase().trim().replace(/\s+/g, '-') : 'global';
     try {
-      await fetch(`${API_BASE}/api/branches/${getBranchFromUrl()}/waffles/config`, {
+      const res = await fetch(`${API_BASE}/api/branches/${encodeURIComponent(slug)}/waffles/config`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ orientation })
       });
+      if (res.ok) {
+        // Brief visual feedback
+        const sel = document.getElementById('tvOrientation');
+        const orig = sel.style.outline;
+        sel.style.outline = '2px solid #22c55e';
+        setTimeout(() => { sel.style.outline = orig; }, 1000);
+      }
     } catch (err) {
       console.error(err);
     }
