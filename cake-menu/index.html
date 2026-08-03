@@ -25,6 +25,16 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            margin: 0 auto;
+            transition: width 0.3s ease;
+        }
+
+        /* If portrait mode is forced, but the screen is wide (landscape laptop), constrain width to look like a portrait screen */
+        @media (min-aspect-ratio: 1/1) {
+            body[data-orientation="portrait"] #main-section {
+                width: 56.25vh; /* 9:16 portrait aspect ratio based on screen height */
+                box-shadow: 0 0 30px rgba(0,0,0,0.15);
+            }
         }
 
         #menu-inner {
@@ -177,6 +187,7 @@
 
     function renderWaffles(waffles, orientation) {
         document.title = orientation === 'landscape' ? 'Waffle Menu - TV Landscape' : 'Waffle Menu - TV Portrait';
+        document.body.setAttribute('data-orientation', orientation);
 
         const titleEl = document.getElementById('menu-title');
         titleEl.style.fontSize = orientation === 'landscape' ? '3.5vh' : '4.5vh';
