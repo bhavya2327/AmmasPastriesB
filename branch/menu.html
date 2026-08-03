@@ -349,7 +349,8 @@
         btn.className = 'w-full text-left px-4 py-3 bg-gray-50 hover:bg-[#F36E21] hover:text-white rounded-lg transition-colors border border-gray-100 font-medium';
         btn.textContent = b.name;
         btn.onclick = () => {
-          window.open('/cake-menu/?branch=' + slug, '_blank');
+          const orientation = document.getElementById('tvOrientation').value;
+          window.open('/cake-menu/?branch=' + slug + '&orientation=' + encodeURIComponent(orientation), '_blank');
           closeWafflePreviewModal();
         };
         container.appendChild(btn);
