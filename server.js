@@ -939,6 +939,12 @@ app.get('/api/branches/:branchId/media', async (req, res) => {
   const globalByUrl = new Map(globalItems.map(g => [g.url, g]));
   let updated = false;
 
+  // 0. Ensure logo item exists
+  if (!branchMedia.some(m => m.id === 'logo')) {
+    branchMedia.unshift({ id: 'logo', name: 'Store Logo', type: 'image', active: true });
+    updated = true;
+  }
+
   // 1. Sync additions: Add any global items not yet in branchMedia
   globalItems.forEach(gItem => {
     const exists = branchMedia.some(bItem => bItem.url === gItem.url);
@@ -994,6 +1000,12 @@ app.get('/api/branches/:branchId/display-data', async (req, res) => {
         const globalItems = globalMedia.filter(m => m.id !== 'logo');
         const globalByUrl = new Map(globalItems.map(g => [g.url, g]));
         let updated = false;
+
+        // ensure logo
+        if (!branchMedia.some(m => m.id === 'logo')) {
+          branchMedia.unshift({ id: 'logo', name: 'Store Logo', type: 'image', active: true });
+          updated = true;
+        }
 
         // additions
         globalItems.forEach(gItem => {
@@ -1116,8 +1128,16 @@ app.put('/api/branches/:branchId/media/:mediaId/toggle', async (req, res) => {
   const { active } = req.body;
 
   const mediaList = await getBranchData(branchId, 'branchMedia', []);
-  const mediaItem = mediaList.find(m => m.id === mediaId);
-  if (!mediaItem) return res.status(404).json({ error: "Media item not found" });
+  let mediaItem = mediaList.find(m => m.id === mediaId);
+  
+  if (!mediaItem) {
+    if (mediaId === 'logo') {
+      mediaItem = { id: 'logo', name: 'Store Logo', type: 'image', active: true };
+      mediaList.unshift(mediaItem);
+    } else {
+      return res.status(404).json({ error: "Media item not found" });
+    }
+  }
 
   mediaItem.active = active !== undefined ? active : !mediaItem.active;
   await saveBranchData(branchId, 'branchMedia', mediaList);
