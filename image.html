@@ -25,6 +25,13 @@
 <h1 class="literata text-[25px] md:text-[30px] lg:text-[35px] ">Images</h1>
 </div>
     <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 mr-2 hidden sm:flex">
+            <label class="text-sm font-medium text-gray-700">TV Orientation:</label>
+            <select id="tvOrientation" class="border border-gray-300 rounded-lg px-2 py-1 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#F36E21]/50">
+                <option value="portrait">Portrait</option>
+                <option value="landscape">Landscape</option>
+            </select>
+        </div>
         <label onclick="openUploadModal()"
             class="flex items-center gap-2 border border-[#CCCCCC] px-4 md:px-5 py-1 lg:rounded-[10px] sm:rounded-[8px] rounded-[6px] lg:text-[17px] sm:text-[15px] text-[13px] font-medium hover:text-white hover-gradient cursor-pointer">
             <i class="fa-solid fa-cloud-arrow-up"></i>

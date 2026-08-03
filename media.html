@@ -70,6 +70,13 @@ window.addEventListener('beforeinstallprompt', function(e) {
           <i class="fa-solid fa-ticket text-xs"></i>
           <span class="uppercase whitespace-nowrap hidden sm:inline">Tokens</span>
         </button>
+        <div class="flex items-center gap-2 mr-2 hidden sm:flex">
+            <label class="text-sm font-medium text-gray-700">TV Orientation:</label>
+            <select id="tvOrientation" class="border border-gray-300 rounded-lg px-2 py-1 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#F36E21]/50">
+                <option value="portrait">Portrait</option>
+                <option value="landscape">Landscape</option>
+            </select>
+        </div>
         <button onclick="testDisplaySign()"
           class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-[#F36E21] text-[#F36E21] hover:bg-[#F36E21] hover:text-white transition-all">
           <i class="fa-solid fa-desktop text-xs"></i>
