@@ -156,15 +156,18 @@
             if (!res.ok) throw new Error('Network response was not ok');
             const waffles = await res.json();
 
-            // Fetch orientation from API config
-            let orientation = 'portrait';
-            try {
-                const configRes = await fetch(`${API_BASE}/api/waffles/config?branch=${encodeURIComponent(branch)}`);
-                if (configRes.ok) {
-                    const config = await configRes.json();
-                    orientation = config.orientation || 'portrait';
-                }
-            } catch(e) { /* keep default */ }
+            // 1. URL param takes priority (set by Live Preview button)
+            // 2. Fall back to API config saved in the database
+            let orientation = params.get('orientation') || 'portrait';
+            if (!params.get('orientation')) {
+                try {
+                    const configRes = await fetch(`${API_BASE}/api/waffles/config?branch=${encodeURIComponent(branch)}`);
+                    if (configRes.ok) {
+                        const config = await configRes.json();
+                        orientation = config.orientation || 'portrait';
+                    }
+                } catch(e) { /* keep default */ }
+            }
 
             renderWaffles(waffles, orientation);
         } catch (error) {
@@ -253,8 +256,8 @@
     // Load once DOM is ready
     document.addEventListener('DOMContentLoaded', loadWaffles);
 
-    // Auto refresh every 30 seconds to keep display sign updated
-    setInterval(loadWaffles, 30000);
+    // Auto refresh every 5 seconds — picks up orientation + menu changes quickly
+    setInterval(loadWaffles, 5000);
    </script>
 </body>
 </html>

@@ -319,9 +319,10 @@
 
   async function testDisplayWaffles() {
     const branch = getBranchFromUrl();
+    const orientation = document.getElementById('tvOrientation').value;
     if (branch) {
       const slug = branch.toLowerCase().trim().replace(/\s+/g, '-');
-      window.open('/cake-menu/?branch=' + slug, '_blank');
+      window.open('/cake-menu/?branch=' + slug + '&orientation=' + encodeURIComponent(orientation), '_blank');
     } else {
       document.getElementById('wafflePreviewModal').classList.remove('hidden');
       loadPreviewBranches();
