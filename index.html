@@ -119,6 +119,18 @@
             padding-top: 1.5rem !important;
         }
 
+        /* Fix popup in portrait mode to not squish the logo */
+        body[data-orientation="portrait"] #homeMenuCard {
+            position: absolute !important;
+            top: 1.5rem !important;
+            right: 1.5rem !important;
+            width: 60% !important;
+            max-width: 320px !important;
+            height: auto !important;
+            border-radius: 1rem !important;
+            z-index: 50 !important;
+        }
+
         #preloader.hide {
             opacity: 0;
             visibility: hidden;
