@@ -51,6 +51,13 @@ window.addEventListener('beforeinstallprompt', function(e) {
         <h1 class="font-semibold text-[#F36E21] text-[28px] md:text-[38px] lg:text-[48px]">Kalyan Nagar</h1>
       </div>
       <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 mr-2 hidden sm:flex">
+            <label class="text-sm font-medium text-gray-700">TV Orientation:</label>
+            <select id="tvOrientation" class="border border-gray-300 rounded-lg px-2 py-1 text-sm outline-none focus:border-[#F36E21]">
+                <option value="landscape">Landscape</option>
+                <option value="portrait">Portrait</option>
+            </select>
+        </div>
         <button onclick="_navigate('orders.html?branch=' + encodeURIComponent(getBranchFromUrl()))"
           class="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white bg-[#F36E21] hover:bg-[#e05d15] transition-all">
           <i class="fa-solid fa-ticket text-xs"></i>

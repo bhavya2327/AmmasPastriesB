@@ -851,8 +851,12 @@
                 });
             }
 
-            part1.innerHTML = contentHtml;
-            part2.innerHTML = contentHtml;
+            // Duplicate the content multiple times to guarantee it exceeds screen width
+            // This ensures a perfectly seamless and gap-free scrolling loop.
+            const repeatedContent = contentHtml.repeat(8);
+
+            part1.innerHTML = repeatedContent;
+            part2.innerHTML = repeatedContent;
         }
 
         // Initialize display app
