@@ -663,7 +663,9 @@ function currentPage() {
          else if (originalHref === '/branch') targetFile = '/branch.html';
          
          if (targetFile) {
-             link.setAttribute('href', targetFile + (userBranch ? '?branch=' + encodeURIComponent(userBranch) : ''));
+             const role = localStorage.getItem('userRole');
+             const appendBranch = (role !== 'admin' && userBranch) ? '?branch=' + encodeURIComponent(userBranch) : '';
+             link.setAttribute('href', targetFile + appendBranch);
          }
       }
   });
