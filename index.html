@@ -119,6 +119,19 @@
             padding-top: 1.5rem !important;
         }
 
+        /* Ensure marquee parts match the constrained width in portrait preview */
+        @media (min-aspect-ratio: 1/1) {
+            body[data-orientation="portrait"] #marquee-part-1,
+            body[data-orientation="portrait"] #marquee-part-2 {
+                min-width: 56.25vh !important;
+            }
+        }
+        
+        /* Speed up marquee in portrait to match landscape reading speed */
+        body[data-orientation="portrait"] .animate-marquee {
+            animation-duration: 11s !important;
+        }
+
         /* Fix popup in portrait mode to not squish the logo */
         body[data-orientation="portrait"] #homeMenuCard {
             position: absolute !important;
