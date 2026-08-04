@@ -236,7 +236,14 @@
         function openDashboard() {
             if (!branch) { _navigate('branch.html'); return; }
             const slug = branch.toLowerCase().trim().replace(/\s+/g, '-');
-            window.location.href = '/' + slug;
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in';
+            
+            if (isCleanActive) {
+                window.location.href = '/admin/' + slug;
+            } else {
+                window.location.href = '/details.html?branch=' + encodeURIComponent(branch);
+            }
         }
 
         function goBackRegistry() {
