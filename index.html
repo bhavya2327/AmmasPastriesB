@@ -846,18 +846,27 @@
                 });
             }
 
-            // Duplicate the content multiple times to guarantee it exceeds screen width
-            // This ensures a perfectly seamless and gap-free scrolling loop.
-            const repeatedContent = contentHtml.repeat(8);
+            // Reset padding to get intrinsic content width
+            part1.style.paddingRight = '0px';
+            part2.style.paddingRight = '0px';
+            part1.innerHTML = contentHtml;
+            part2.innerHTML = contentHtml;
 
-            part1.innerHTML = repeatedContent;
-            part2.innerHTML = repeatedContent;
-
-            // Dynamically adjust animation duration to keep speed constant
+            // Dynamically adjust spacing and duration
             setTimeout(() => {
+                const bannerElement = document.getElementById('announcementMarqueeBanner');
+                const bannerWidth = bannerElement ? bannerElement.offsetWidth : window.innerWidth;
+                
+                // Add padding equal to the screen width.
+                // This ensures that when the current sentence completely exits the left side, 
+                // the next sentence starts perfectly on the right side.
+                part1.style.paddingRight = bannerWidth + 'px';
+                part2.style.paddingRight = bannerWidth + 'px';
+
                 const partWidth = part1.offsetWidth;
-                const speed = 100; // pixels per second (comfortable reading speed)
+                const speed = 150; // pixels per second (readable speed)
                 const duration = partWidth / speed;
+                
                 document.getElementById('marqueeContainer').style.animationDuration = duration + 's';
             }, 100);
         }
