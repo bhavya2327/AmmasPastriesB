@@ -131,11 +131,6 @@
             z-index: 50 !important;
         }
 
-        /* Fix marquee speed in portrait mode */
-        body[data-orientation="portrait"] .animate-marquee {
-            animation-duration: 8s !important;
-        }
-
         #preloader.hide {
             opacity: 0;
             visibility: hidden;
@@ -857,6 +852,14 @@
 
             part1.innerHTML = repeatedContent;
             part2.innerHTML = repeatedContent;
+
+            // Dynamically adjust animation duration to keep speed constant
+            setTimeout(() => {
+                const partWidth = part1.offsetWidth;
+                const speed = 100; // pixels per second (comfortable reading speed)
+                const duration = partWidth / speed;
+                document.getElementById('marqueeContainer').style.animationDuration = duration + 's';
+            }, 100);
         }
 
         // Initialize display app
