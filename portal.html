@@ -223,7 +223,14 @@
             
             closePreviewModal();
             const slug = selectedBranch.toLowerCase().trim().replace(/\s+/g, '-');
-            window.open('/ammas-pastries/' + slug + '?preview=true&orientation=' + orientation, '_blank');
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            const isCleanActive = isLocal || window.location.hostname === 'tv.spydernet.in';
+            
+            if (isCleanActive) {
+                window.open('/ammas-pastries/' + slug + '?preview=true&orientation=' + orientation, '_blank');
+            } else {
+                window.open('/ammas-pastries/index.html?branch=' + encodeURIComponent(selectedBranch) + '&preview=true&orientation=' + orientation, '_blank');
+            }
         }
 
         function openDashboard() {
