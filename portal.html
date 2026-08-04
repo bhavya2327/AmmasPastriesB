@@ -235,8 +235,7 @@
 
         function openDashboard() {
             if (!branch) { _navigate('branch.html'); return; }
-            const slug = branch.toLowerCase().trim().replace(/\s+/g, '-');
-            window.location.href = '/' + slug;
+            window.location.href = '/media.html?branch=' + encodeURIComponent(branch);
         }
 
         function goBackRegistry() {
