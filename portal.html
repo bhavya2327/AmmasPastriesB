@@ -93,6 +93,32 @@
 
     </div>
 
+    <!-- Preview Configuration Modal -->
+    <div id="previewConfigModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden transition-opacity">
+        <div class="bg-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl relative">
+            <h3 class="literata text-2xl font-black text-black mb-6">Preview Settings</h3>
+            
+            <div class="mb-6" id="branchSelectContainer">
+                <label class="block text-gray-700 font-bold mb-2 text-sm uppercase tracking-wider">Select Branch</label>
+                <select id="previewBranchSelect" class="w-full bg-gray-50 border border-gray-200 text-gray-700 py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F36E21]/50 focus:border-[#F36E21] transition-all">
+                    <!-- Options injected by JS -->
+                </select>
+            </div>
+
+            <div class="mb-8">
+                <label class="block text-gray-700 font-bold mb-2 text-sm uppercase tracking-wider">Orientation</label>
+                <select id="previewOrientationSelect" class="w-full bg-gray-50 border border-gray-200 text-gray-700 py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F36E21]/50 focus:border-[#F36E21] transition-all">
+                    <option value="landscape">Landscape (Horizontal)</option>
+                    <option value="portrait">Portrait (Vertical)</option>
+                </select>
+            </div>
+
+            <div class="flex gap-4">
+                <button onclick="closePreviewModal()" class="flex-1 py-3 px-6 rounded-xl font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition-colors uppercase text-sm tracking-wider">Cancel</button>
+                <button onclick="launchPreview()" class="flex-1 py-3 px-6 rounded-xl font-bold text-white bg-gradient-to-r from-[#F36E21] to-[#D3540A] hover:from-[#D3540A] hover:to-[#B44405] transition-colors uppercase text-sm tracking-wider shadow-md">Open</button>
+            </div>
+        </div>
+    </div>
 
 
     <script src="script.js?v=3"></script>
@@ -151,10 +177,53 @@
             if (backBtn) backBtn.classList.remove('hidden');
         }
 
-        function openPreview() {
-            if (!branch) { window.open('/ammas-pastries?preview=true', '_blank'); return; }
-            const slug = branch.toLowerCase().trim().replace(/\s+/g, '-');
-            window.open('/ammas-pastries/' + slug + '?preview=true', '_blank');
+        async function openPreview() {
+            const modal = document.getElementById('previewConfigModal');
+            const branchContainer = document.getElementById('branchSelectContainer');
+            const branchSelect = document.getElementById('previewBranchSelect');
+            
+            if (!branch && localStorage.getItem('userRole') === 'admin') {
+                branchContainer.style.display = 'block';
+                branchSelect.innerHTML = '<option>Loading...</option>';
+                try {
+                    const res = await fetch('/api/branches');
+                    if (res.ok) {
+                        const branches = await res.json();
+                        if (branches.length > 0) {
+                            branchSelect.innerHTML = branches.map(b => `<option value="${b.name}">${b.name}</option>`).join('');
+                        } else {
+                            branchSelect.innerHTML = '<option value="">No branches found</option>';
+                        }
+                    }
+                } catch(e) {
+                    branchSelect.innerHTML = '<option value="">Error loading</option>';
+                }
+            } else {
+                branchContainer.style.display = 'none';
+            }
+            
+            modal.classList.remove('hidden');
+        }
+
+        function closePreviewModal() {
+            document.getElementById('previewConfigModal').classList.add('hidden');
+        }
+
+        function launchPreview() {
+            let selectedBranch = branch;
+            if (!selectedBranch && localStorage.getItem('userRole') === 'admin') {
+                selectedBranch = document.getElementById('previewBranchSelect').value;
+            }
+            const orientation = document.getElementById('previewOrientationSelect').value;
+            
+            if (!selectedBranch) {
+                alert("Please select a branch.");
+                return;
+            }
+            
+            closePreviewModal();
+            const slug = selectedBranch.toLowerCase().trim().replace(/\s+/g, '-');
+            window.open('/ammas-pastries/' + slug + '?preview=true&orientation=' + orientation, '_blank');
         }
 
         function openDashboard() {
